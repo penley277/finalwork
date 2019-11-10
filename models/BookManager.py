@@ -3,7 +3,7 @@ from list.BookList import BookList
 
 
 class BookManager(Manager):
-    booklist = BookList()
+    booklist = BookList("")
 
     def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="book"):
         """

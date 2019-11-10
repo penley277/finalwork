@@ -2,73 +2,113 @@ import sqlite3
 
 
 class DBO(object):
-    """
-    使用通用的数据库接口，完成在数据库中的增删改查等操作
-    """
+    def __init__(self, database_name):
+        self.conn = None
+        self.c = None
+        self.connect_database(database_name)
 
-    def __init__(self, name):
-        """
-        初始化函数，创建数据库连接
-        """
-        self.conn = sqlite3.connect(name)
-        self.c = self.conn.cursor()
-
-    def executeUpdate(self, sql, ob):
-        """
-        数据库的插入、修改函数，通过sql语句进行插入操作以及修改，
-        只需要完成操作后，更新数据即可
-        :param sql: 传入的SQL语句
-        :param ob: 传入的数据，可以是多个
-        :return: 返回操作数据库状态
-        """
+    def connect_database(self, database_name):
         try:
-            self.c.executemany(sql, ob)
-            add = self.conn.total_changes
-        except Exception as e:
-            print('Error： ', e)
-            return False
-        finally:
+            #   排除错误的数据库名
+            if database_name[-3:] != '.db':
+                database_name += '.db'
+            self.conn = sqlite3.connect(database_name)
+            self.c = self.conn.cursor()
+        except sqlite3.Error as e:
+            print("unable to open database file:", e)
+
+    def close_database(self):
+        try:
+            self.conn.close()
+        except sqlite3.Error as e:
+            print("unable to close database file:", e)
+
+    def create_table(self, table_name, args):
+        try:
+            table_items = ''
+            if type(args) == list or type(args) == tuple:
+                for item in args:
+                    table_items += item + ','
+                table_items = table_items[:-1]  # 去掉最后一个逗号
+            elif type(args) == dict:
+                for item in args.items():
+                    table_items += item[0] + ' ' + item[1] + ','
+                table_items = table_items[:-1]  # 去掉最后一个逗号
+
+            self.c.execute('CREATE TABLE ' + table_name + ' (' + table_items + ')')
+        except sqlite3.Error as e:
+            print("unable to create table:", table_name, e)
+
+    def drop_table(self, table_name):
+        try:
+            self.c.execute('DROP TABLE ' + table_name)
+        except sqlite3.Error as e:
+            print("unable to drop table:", table_name, e)
+
+    def insert_values(self, table_name, args):
+        try:
+            table_items = ''
+            table_values = ''
+            if type(args) == list or type(args) == tuple:
+                for item in args:
+                    if type(item) == str:
+                        value = '"' + item + '"'
+                    else:
+                        value = item
+                    table_values += str(value) + ','
+                table_values = table_values[:-1]  # 去掉最后一个逗号
+                self.c.execute('INSERT INTO ' + table_name + ' VALUES (' + table_values + ')')
+            elif type(args) == dict:
+                for item in args.items():
+                    table_items += item[0] + ','
+                    if type(item[1]) == str:
+                        value = '"' + item[1] + '"'
+                    else:
+                        value = item[1]
+                    table_values += str(value) + ','
+                table_items = table_items[:-1]
+                table_values = table_values[:-1]  # 去掉最后一个逗号
+                self.c.execute('INSERT INTO ' + table_name + ' (' + table_items + ') VALUES (' + table_values + ')')
             self.conn.commit()
-        if add > 0:
-            return True
-        else:
-            return False
+        except sqlite3.Error as e:
+            print("unable to insert table:", table_name, e)
 
-
-    def executeDelete(self, sql, ob):
-        """
-        操作数据库数据删除的函数
-        :param sql: 传入的SQL语句
-        :param ob: 传入数据
-        :return: 返回操作数据库状态
-        """
+    def select_items(self, table_name, args, constrains=''):
         try:
-            self.c.execute(sql, ob)
-            delete = self.conn.total_changes
-        except Exception as e:
-            print('Error： ', e)
-            return False
-        finally:
-            self.conn.commit() # 进行提交，完成数据库变化
-        if delete > 0:
-            return True
-        else:
-            return False
+            table_items = ''
+            for item in args:
+                table_items += item + ','
+            table_items = table_items[:-1]  # 去掉最后一个逗号
+            self.c.execute('SELECT ' + table_items + ' FROM ' + table_name + ' ' + constrains)
+            return self.c.fetchall()
+        except sqlite3.Error as e:
+            print("unable to select items from:", table_name, e)
 
-    def executeQuery(self, sql, ob):
-        """
-        数据库数据查询
-        :param sql: 传入的SQL语句
-        :param ob: 传入数据
-        :return: 返回操作数据库状态
-        """
-        query = self.c.execute(sql, ob)
-        return query
+    def update_values(self, table_name, args, constrains=''):
+        try:
+            table_items = ''
+            for item in args.items():
+                if type(item[1]) == str:
+                    value = '"' + item[1] + '"'
+                else:
+                    value = item[1]
+                table_items += item[0] + '=' + str(value) + ','
+            table_items = table_items[:-1]  # 去掉最后一个逗号
+            self.c.execute('UPDATE ' + table_name + ' SET ' + table_items + ' ' + constrains)
+            self.conn.commit()
+            
+        except sqlite3.Error as e:
+            print("unable to update values in", table_name, e)
 
-    def close(self):
-        """
-        关闭数据库相关连接的函数
-        :return:
-        """
-        self.c.close()
-        self.conn.close()
+    def delete_values(self, table_name, constrains=''):
+        try:
+            self.c.execute('DELETE FROM ' + table_name + ' ' + constrains)
+        except sqlite3.Error as e:
+            print("unable to delete values from:", table_name, e)
+
+    def get_table_info(self, table_name):
+        try:
+            self.c.execute('PRAGMA table_info(' + table_name + ')')
+            return self.c.fetchall()
+        except sqlite3.Error as e:
+            print("unable to get table info:", table_name, e)
