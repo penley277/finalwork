@@ -96,13 +96,14 @@ class DBO(object):
             table_items = table_items[:-1]  # 去掉最后一个逗号
             self.c.execute('UPDATE ' + table_name + ' SET ' + table_items + ' ' + constrains)
             self.conn.commit()
-            
+
         except sqlite3.Error as e:
             print("unable to update values in", table_name, e)
 
     def delete_values(self, table_name, constrains=''):
         try:
             self.c.execute('DELETE FROM ' + table_name + ' ' + constrains)
+            self.conn.commit()
         except sqlite3.Error as e:
             print("unable to delete values from:", table_name, e)
 

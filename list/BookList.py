@@ -56,7 +56,4 @@ class BookList(object):
 
 if __name__ == '__main__':
     booklist = BookList('system.db')
-    print(booklist.getDBInfo())
-    other = Book('XW3002','中国文学史', '章培恒、骆玉明','上海文艺出版社',2, 1, 2000, 4, 8)
-    booklist.addBook(other)
-    print(booklist.getBookByNo('XW3002'))
+    booklist.removeBook('XW3002')
