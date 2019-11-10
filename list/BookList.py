@@ -51,9 +51,3 @@ class BookList(object):
         :return: 无
         """
         pass
-
-
-
-if __name__ == '__main__':
-    booklist = BookList('system.db')
-    booklist.removeBook('XW3002')
