@@ -28,6 +28,13 @@ class Manager(object):
         """
         return self.managerID
 
+    def setManagerId(self, id):
+        """
+        获取管理员id
+        :return: 管理员id
+        """
+        self.managerID = id
+
     def getName(self):
         """
         获取管理员名字
@@ -66,6 +73,14 @@ class Manager(object):
         """
         self.passwd = passwd
 
+    def getPasswd(self):
+        """
+        更改密码
+        :param passwd: 想要改为的密码
+        :return: 无
+        """
+        return self.passwd
+
     def getType(self):
         """
         获取管理员类型
@@ -80,33 +95,3 @@ class Manager(object):
         :return: 无
         """
         self.type = type
-
-    def login(self, passwd):
-        """
-        登录，比较密码是不是一样的
-        :param passwd: 用户输入的密码
-        :return: 如果密码相同，返回真，返回假
-        """
-        if self.passwd == passwd:  # 比较密码
-            return True
-        return False
-
-    @abc.abstractmethod
-    def addInfo(self, object):
-        """
-        添加一个学生或者书籍的信息，
-        如果是学生管理员，添加一个学生信息
-        如果是书籍管理员，则添加一个书籍信息
-        :param object: 书籍的信息
-        :return: 返回添加成功或者失败的值
-        """
-        pass
-
-    @abc.abstractmethod
-    def importObject(self, object):
-        """
-        批量导入学生或者书籍
-        :param object: 导入学生或者书籍信息的文件名
-        :return: 导入成功或者失败的状态值
-        """
-        pass

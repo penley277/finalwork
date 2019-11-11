@@ -1,25 +1,36 @@
+from DButil.DBO import DBO
+from models.ManagerFactory import ManagerFactory
+
+
 class ManagerList(object):
 
-    def __init__(self, managerList=None):
-        if managerList is None:
-            managerList = []
-        self.managerList = managerList
+    def __init__(self, managerList):
+        self.db = DBO(managerList)
 
-    def addManager(self, object):
-        self.managerList.append(object)
+    def addManager(self, other):
+        self.db.insert_values('manager', [other.getManagerId(), other.getName(),
+                                          other.getPhone(), other.getPasswd(), other.getType()])
 
     def getManagerById(self, id):
-        i = 0
-        while i < len(self.managerList):
-            if self.managerList[i].getManagerId() == id:
-                return self.managerList[i]
-            i = i + 1
-        return None
+        return self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', id, '\''))
 
-    def getManagerIndexById(self, id):
-        i = 0
-        while i < len(self.managerList):
-            if self.managerList[i].getManagerId() == id:
-                return i
-            i = i+1
-        return -1
+    def getManagerByName(self, name):
+        return self.db.select_items('manager', '*', '%s%s%s' % ('where name=\'', name, '\''))
+
+    def removeManager(self, num):
+        """
+        从数据库中删除管理员
+        :param num: 删除管理员的ID号
+        :return:
+        """
+        self.db.delete_values('manager', '%s%s%s' % ('where managerID=\'', num, '\''))
+
+    def changeType(self, num, manaType):
+        self.db.update_values('manager', dict([('managerType', manaType)]),
+                              '%s%s%s' % ('where managerID=\'', num, '\''))
+
+
+if __name__ == "__main__":
+    managerlist = ManagerList('system.db')
+    # manager = Manager('101', , , 'dfkjdjafkd', 'stu')
+    managerlist.changeType('101', 'book')

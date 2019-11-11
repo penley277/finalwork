@@ -6,7 +6,7 @@ from models.StuManager import  StuManager
 
 class ManagerFactory(AbstractFactory):
 
-    def getManager(type):
+    def getManager(self, type):
         if type == None:
             return None
         elif type == "stu": # 建立一个学生管理员类
@@ -15,5 +15,3 @@ class ManagerFactory(AbstractFactory):
             return BookManager()
         elif type == "admin": # ？？？？？
             return AdminManager()
-
-

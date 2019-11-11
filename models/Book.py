@@ -1,4 +1,4 @@
-from util import Time
+from models.util import Time
 
 
 class Book(object):

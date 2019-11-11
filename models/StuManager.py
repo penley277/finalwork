@@ -16,15 +16,3 @@ class StuManager(Manager):
         """
         super().__init__(managerID, name, phone, passwd)
         self.type = type
-
-
-    def addInfo(self, object):
-        """
-        添加一个学生
-        :param object: 学生类型
-        :return: 无
-        """
-        self.studentlist.addStu(object)
-
-    def importObject(self, object):
-        pass
