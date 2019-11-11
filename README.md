@@ -82,7 +82,42 @@
 | 发布时间 pubTime   |      |      |
 | 书籍评论 comment   |      |      |
 
+#### 借阅信息类
 
+| 字段名              | 类型 | PK   |
+| ------------------- | ---- | ---- |
+| 借阅信息号 infoId   |      | *    |
+| 学生学号 studNo     |      |      |
+| 书籍书号 bookNo     |      |      |
+| 借阅时间 borrowTime |      |      |
+| 归还时间 finishTime |      |      |
+
+#### 预订信息类
+| 字段名              | 类型 | PK   |
+| ------------------- | ---- | ---- |
+| 预订信息号 infoId   |      | *    |
+| 学生学号 studNo     |      |      |
+| 书籍书号 bookNo     |      |      |
+| 预订时间 borrowTime |      |      |
+
+#### 管理员类
+
+| 字段                   | 类型 | PK   |
+| ---------------------- | ---- | ---- |
+| 管理员号 managerId     |      | *    |
+| 姓名 name              |      |      |
+| 手机号 phone           |      |      |
+| 密码 passwd            |      |      |
+| 管理员类型 managerType |      |      |
+
+### 其他类
+
+BookList
+StudentList
+InformList
+SubInformList
+BorrowInformList
+ManagerList
 
 
 ## 用例图及用例描述

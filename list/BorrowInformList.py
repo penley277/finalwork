@@ -12,8 +12,3 @@ class BorrowInformList(InformList):
 
     def deleteInform(self, other):
         pass
-
-
-
-
-
