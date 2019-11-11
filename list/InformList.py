@@ -15,11 +15,7 @@ class InformList(object):
         pass
 
     @abc.abstractmethod
-    def getInformByStudNo(self):
-        pass
-
-    @abc.abstractmethod
-    def getInformByBookNo(self):
+    def getInformByNo(self):
         pass
 
 

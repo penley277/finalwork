@@ -1,18 +1,17 @@
+from DButil.DBO import DBO
 from list.InformList import InformList
 
 
 class BorrowInformList(InformList):
 
-    def __init__(self, borrowList = None):
-        if borrowList is None:
-            borrowList = []
-        self.borrowList = borrowList
+    def __init__(self, borrowList):
+        self.db = DBO(borrowList)
 
     def addInform(self, other):
-        self.borrowList.append(other)
+        pass
 
     def deleteInform(self, other):
-        self.borrowList.remove(other)
+        pass
 
 
 

@@ -7,7 +7,7 @@ class Student(object):
     学生类是一个实体类
     """
 
-    def __init__(self, studNo, studName, major, classNum, phoneNum, passwd=None, bookList = None):
+    def __init__(self, studNo, studName, major, classNum, phoneNum, passwd=None):
         """
         学生类的初始化函数
         :param studNo: 学号
@@ -24,7 +24,6 @@ class Student(object):
         self.classNum = classNum
         self.phoneNum = phoneNum
         self.passwd = passwd
-        self.bookList = bookList
 
     def getStudNo(self):
         """
