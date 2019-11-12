@@ -70,6 +70,12 @@ class DBO(object):
             print("unable to drop table:", table_name, e)
 
     def insert_values(self, table_name, args):
+        """
+        数据库中的插入记录操作
+        :param table_name: 插入目标的表名
+        :param args: 插入记录的属性
+        :return:
+        """
         try:
             table_items = ''
             table_values = ''

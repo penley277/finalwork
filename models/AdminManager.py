@@ -3,7 +3,7 @@ from models.Manager import Manager
 
 class AdminManager(Manager):
 
-    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="stu"):
+    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="admin"):
         """
         StuManager class is the Manager of Student
         :param managerID: the id number of student manager

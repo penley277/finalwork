@@ -8,7 +8,7 @@ class BorrowInformList(InformList):
         self.db = DBO(borrowList)
 
     def addInform(self, other):
-        pass
+        self.db.insert_values('borrowInfo',[])
 
     def deleteInform(self, other):
         pass
