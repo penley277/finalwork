@@ -1,18 +1,28 @@
+from util.util import Time
+
+
 class SubInform(object):
     """
     预约信息的类，包含了学生进行预约的信息，是数据库中的一个表
     """
 
-    def __init__(self, stuNo, bookNo, time):
+    def __init__(self, no, stuNo, bookNo, time):
         """
         预约信息的类
         :param stuNo: 学好
         :param bookNo: 书号
         :param time: 预约时间
         """
+        self.no = no
         self.stuNo = stuNo
         self.bookNo = bookNo
         self.time = time
+
+    def getNo(self):
+        return self.no
+
+    def setNo(self, no):
+        self.no = no
 
     def getStuNo(self):
         """

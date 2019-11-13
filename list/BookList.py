@@ -13,8 +13,7 @@ class BookList(object):
         self.db.insert_values('book', [other.getBookNo(), other.getBookName(),
                                        other.getAuthor(), other.getPublisher(),
                                        other.getBookCnt(), other.getBorrowCnt(),
-                                       other.getPubTime().getYear(), other.getPubTime().getMonth(),
-                                       other.getPubTime().getDay()," "])
+                                       other.getPubTime()," "])
 
     def getBookByName(self, name):
         """
@@ -41,11 +40,4 @@ class BookList(object):
         self.db.delete_values('book', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
     def addBookByFile(self, filename):
-        pass
-
-    def outputBookList(self):
-        """
-        输出书籍列表中的所有信息
-        :return: 无
-        """
         pass

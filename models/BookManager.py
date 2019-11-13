@@ -3,7 +3,6 @@ from list.BookList import BookList
 
 
 class BookManager(Manager):
-    booklist = BookList('system.db')
 
     def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="book"):
         """
@@ -16,14 +15,3 @@ class BookManager(Manager):
         """
         super().__init__(managerID, name, phone, passwd)
         self.type = type
-
-    def addInfo(self, object):
-        """
-        添加一个学生
-        :param object: 学生类型
-        :return: 无
-        """
-        self.booklist.addBook(object)
-
-    def importObject(self, object):
-        pass

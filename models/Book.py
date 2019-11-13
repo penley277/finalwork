@@ -6,7 +6,7 @@ class Book(object):
     书籍类包含了书籍的信息
     """
     def __init__(self, bookNo, bookName, author, publisher,
-                 bookCnt, borrowCnt, year, month, day, comment=None):
+                 bookCnt, borrowCnt, pubTime, comment=None):
         """
         书籍类的初始化函数
         :rtype: object
@@ -24,7 +24,7 @@ class Book(object):
         self.publisher = publisher
         self.bookCnt = bookCnt
         self.borrowCnt = borrowCnt
-        self.pubTime = Time(year, month, day)
+        self.pubTime = pubTime
         self.comment = comment
 
     def getBookNo(self):
@@ -116,15 +116,13 @@ class Book(object):
         """
         return self.pubTime
 
-    def setPubTime(self, year, month ,day):
+    def setPubTime(self, pubTime):
         """
         设置书籍的出版时间
         :param pubTime: 书籍的出版时间
         :return: 无
         """
-        self.pubTime.setYear(year)
-        self.pubTime.setMonth(month)
-        self.pubTime.setDay(day)
+        self.pubTime = pubTime
 
     def getComment(self):
         """

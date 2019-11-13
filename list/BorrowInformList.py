@@ -1,5 +1,8 @@
 from DButil.DBO import DBO
 from list.InformList import InformList
+import datetime
+
+from models.BorrowInfo import BorrowInfo
 
 
 class BorrowInformList(InformList):
@@ -8,7 +11,24 @@ class BorrowInformList(InformList):
         self.db = DBO(borrowList)
 
     def addInform(self, other):
-        self.db.insert_values('borrowInfo',[])
+        self.db.insert_values('borrowInfo',[other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
+                                            other.getFinishTime()])
 
     def deleteInform(self, other):
-        pass
+        self.db.delete_values('borrowInfo', '%s%s%s' % ('where studNo=\'', other, '\''))
+
+    def getInformByStudNo(self, no):
+        self.db.select_items('borrowInfo',  '*', '%s%s%s' % ('where studNo=\'', no, '\''))
+
+    def getInformByBookNo(self, no):
+        self.db.select_items('borrowInfo',  '*', '%s%s%s' % ('where bookNo=\'', no, '\''))
+
+    def getInformByTime(self, time):
+        self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
+
+
+
+
+
+
+

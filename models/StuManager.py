@@ -3,7 +3,6 @@ from list.StudentList import StudentList
 
 
 class StuManager(Manager):
-    studentlist = StudentList()
 
     def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="stu"):
         """

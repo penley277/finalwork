@@ -3,9 +3,6 @@ import abc
 
 class InformList(object):
 
-    def __init(self):
-        pass
-
     @abc.abstractmethod
     def addInform(self, object):
         pass
@@ -15,12 +12,16 @@ class InformList(object):
         pass
 
     @abc.abstractmethod
-    def getInformByNo(self):
+    def getInformByStudNo(self, no):
+        pass
+
+    @abc.abstractmethod
+    def getInformByBookNo(self, no):
         pass
 
 
     @abc.abstractmethod
-    def getInformByTime(self):
+    def getInformByTime(self, time):
         pass
 
     @abc.abstractmethod
