@@ -73,6 +73,9 @@ class BookList(object):
             return None
         return select
 
+    def topTenByTime(self):
+        pass
+
     def addBookByFile(self, filename):
         """
         从文件批量添加书籍到数据库中
