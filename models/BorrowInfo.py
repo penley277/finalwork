@@ -66,18 +66,17 @@ class BorrowInfo(object):
         """
         self.borrowTime = borrowTime
 
-    def setFinishTime(self, borrowTime):
+    def getFinishTime(self):
+        return self.finishTime
+
+    def setFinishTime(self, finishTime):
         """
 
         :param self:
         :return:
         :TODO: 进行时间格式的统一
         """
-        self.finishTime = borrowTime
-
-    def getFinishTime(self):
-        return self.finishTime
-
+        self.finishTime = finishTime
 
     def print(self):
         print(self.studNo, self.bookNo, self.borrowTime, self.finishTime)

@@ -1,15 +1,16 @@
 from DButil.DBO import DBO
+from models.Manager import Manager
 from models.ManagerFactory import ManagerFactory
 
 
 class ManagerList(object):
 
-    def __init__(self, managerList):
+    def __init__(self, database_name):
         """
         初始化管理员列表，链接数据库
         :param managerList:
         """
-        self.db = DBO(managerList)
+        self.db = DBO(database_name)
 
     def addManager(self, other):
         """
@@ -26,7 +27,10 @@ class ManagerList(object):
         :param id: 想要获取的管理员ID
         :return: 返回获取的列表
         """
-        return self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', id, '\''))
+        select = self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', id, '\''))
+        if len(select) == 0:
+            return None
+        return Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
 
     def getManagerByName(self, name):
         """
@@ -34,7 +38,10 @@ class ManagerList(object):
         :param name: 管理员姓名
         :return: 管理员列表
         """
-        return self.db.select_items('manager', '*', '%s%s%s' % ('where name=\'', name, '\''))
+        select = self.db.select_items('manager', '*', '%s%s%s' % ('where name=\'', name, '\''))
+        if len(select) == 0:
+            return None
+        return Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
 
     def removeManager(self, num):
         """
@@ -52,8 +59,8 @@ class ManagerList(object):
         :return:
         """
         if manaType == 'stu' or manaType == 'book':
-                self.db.update_values('manager', dict([('managerType', manaType)]),
-                                      '%s%s%s' % ('where managerID=\'', num, '\''))
+            self.db.update_values('manager', dict([('managerType', manaType)]),
+                                  '%s%s%s' % ('where managerID=\'', num, '\''))
         else:
             print("修改的类型有误或者超出权限")
 
@@ -66,3 +73,11 @@ class ManagerList(object):
         """
         self.db.update_values('manager', dict([('passwd', passwd)]),
                               '%s%s%s' % ('where managerID=\'', num, '\''))
+
+
+if __name__ == '__main__':
+    stu = ManagerList()
+    stu1 = Manager('1113000001', '陈德坤', 'cj11B10ms', '13146385999', 'book')
+    stu2 = Manager('1113000002', '陈梧宾', 'cj11B10ms', '13381118748', 'book')
+
+    print(stu.getManagerById('1113000001').getManagerId())

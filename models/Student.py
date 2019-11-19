@@ -70,6 +70,12 @@ class Student(object):
         """
         self.major = major
 
+    def getClassNum(self):
+        return self.classNum
+
+    def setClassNum(self, classNum):
+        self.classNum = classNum
+
 
     def getPhoneNum(self):
         return self.phoneNum
@@ -85,6 +91,13 @@ class Student(object):
         :return: 无
         """
         self.passwd = passwd
+
+    def getPassWd(self):
+        """
+        进行更改密码的获取
+        :return: 返回想要获取的密码
+        """
+        return self.passwd
 
     def print(self):
         """

@@ -7,7 +7,7 @@ class Manager(object):
     学生管理员和图书管理员
     """
 
-    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type = None):
+    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type=None):
         """
         :param managerID: 管理员ID
         :param name:  管理员名字
