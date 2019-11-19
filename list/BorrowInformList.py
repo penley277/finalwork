@@ -16,30 +16,20 @@ class BorrowInformList(InformList):
         self.studList = StudentList(database_name)
 
     def addInform(self, other):
-        book = self.bookList.getBookByNo(other.getBookNo()) # 根据书号，获取书籍
-        student = self.studList.getStuByNo(other.getStuNo) # 根据学生号，获取学生名
+        book = self.bookList.getBookByNo(other.getBookNo())
+        student = self.studList.getStuByNo(other.getStuNo)
 
         if book.getBookCnt() == 0:
             return False
-        self.db.update_values('book',['bookCnt',book.getBookCnt()-1, 'borrowCnt', book.getBorrowCnt()+1], '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
+        self.db.update_values('book',{'bookCnt':book.getBookCnt()-1, 'borrowCnt': book.getBorrowCnt()+1}, '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         self.db.insert_values('borrowInfo',[other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
                                             other.getFinishTime()])
         return True
 
     def deleteInform(self, no):
-        """
-        从列表中删除某个学生所有的借阅信息
-        :param no: 学生的学号
-        :return:用于进行学生书籍的批量归还
-        """
         self.db.delete_values('borrowInfo', '%s%s%s' % ('where studNo=\'', no, '\''))
 
     def getInformByStudNo(self, no):
-        """
-        获取某个学生所有的借阅信息，通过书名进行查看
-        :param no: 学生学号
-        :return: 如果学生
-        """
         select = self.db.select_items('borrowInfo',  '*', '%s%s%s' % ('where studNo=\'', no, '\''))
         i = 0
         bi = []
@@ -52,11 +42,6 @@ class BorrowInformList(InformList):
         return bi
 
     def getInformByBookNo(self, no):
-        """
-        通过书号，获取所有这本书所有的借阅信息
-        :param no: 书号
-        :return: 如果这本书不存在借阅历史或者这本书不存在，将会返回None；否则，将获取所有的借阅信息
-        """
         select = self.db.select_items('borrowInfo',  '*', '%s%s%s' % ('where bookNo=\'', no, '\''))
         i = 0
         bi = []
@@ -70,9 +55,9 @@ class BorrowInformList(InformList):
 
     def getInformByTime(self, time):
         """
-        通过时间获取借阅信息列表中的内容
-        :param time: 想要获取的日期时间
-        :return: 返回借阅信息列表
+
+        :param time:
+        :return:
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
         i = 0

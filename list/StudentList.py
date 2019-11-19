@@ -54,6 +54,14 @@ class StudentList(object):
             return None
         return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
 
+    def setPassWdByIdPasswd(self, no, oldPasswd, newPassWd):
+        select = self.db.select_items('student', '*', '%s%s%s' % ('where studNo=\'', no, '\''))
+        if len(select) == 0:
+            return None
+        student = Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
+        if oldPasswd == student.getPassWd():
+            self.db.update_values('student', {'passwd':newPassWd}, '%s%s%s' % ('where studNo=\'', no, '\''))
+
     def outputStuList(self):
         """
         输出所有的学生信息
@@ -82,7 +90,3 @@ class StudentList(object):
                 self.addStu(student)
         file_to_read.close()
 
-
-if __name__ == '__main__':
-    b = StudentList('system.db')
-    b.addStuByFile('student1.txt')

@@ -1,6 +1,5 @@
 from DButil.DBO import DBO
 from models.Manager import Manager
-from models.ManagerFactory import ManagerFactory
 
 
 class ManagerList(object):
@@ -64,20 +63,17 @@ class ManagerList(object):
         else:
             print("修改的类型有误或者超出权限")
 
-    def changePasswd(self, num, passwd):
+    def changePasswd(self, num, oldPasswd, newPasswd):
         """
         修改管理员密码
         :param num: 想要修改的管理员id
         :param passwd: 想要改为的密码
         :return:
         """
-        self.db.update_values('manager', dict([('passwd', passwd)]),
-                              '%s%s%s' % ('where managerID=\'', num, '\''))
+        select = self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', num, '\''))
+        if len(select) == 0:
+            return None
+        manager = Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
+        if oldPasswd == manager.getPasswd():
+            self.db.update_values('manager', {'passwd': newPasswd}, '%s%s%s' % ('where managerID=\'', num, '\''))
 
-
-if __name__ == '__main__':
-    stu = ManagerList()
-    stu1 = Manager('1113000001', '陈德坤', 'cj11B10ms', '13146385999', 'book')
-    stu2 = Manager('1113000002', '陈梧宾', 'cj11B10ms', '13381118748', 'book')
-
-    print(stu.getManagerById('1113000001').getManagerId())
