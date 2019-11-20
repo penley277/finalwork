@@ -28,11 +28,13 @@ class BorrowInformList(InformList):
 
         if book.getBookCnt() == 0:  # 如果书籍已经借空
             return False
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
-                              '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
+
         self.history.append(other.getBookNo())
         self.db.insert_values('borrowInfo', [other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
                                              other.getFinishTime()])
+
+        self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
+                              '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         return True
 
     def deleteInform(self, no):
@@ -44,9 +46,9 @@ class BorrowInformList(InformList):
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where infoId=\'', no, '\''))
         book = self.bookList.getBookByNo(select[0][2])
 
+        self.db.delete_values('borrowInfo', '%s%s' % ('where infoId=', no))
         self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
-        self.db.delete_values('borrowInfo', '%s%s' % ('where infoId=', no))
 
     def getInformByStudNo(self, no):
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where studNo=\'', no, '\''))

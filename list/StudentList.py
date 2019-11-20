@@ -21,6 +21,14 @@ class StudentList(object):
                                           stu.getMajor(), stu.getClassNum(),
                                           stu.getPhoneNum(), stu.getPassWd()])
 
+    def removeBook(self, num):
+        """
+        从数据库中删除学生
+        :param num: 删除学生的学号
+        :return:
+        """
+        self.db.delete_values('student', '%s%s%s' % ('where studNum=\'', num, '\''))
+
     def getStuByNo(self, no):
         """
         使用学生的学号获取学生的信息
