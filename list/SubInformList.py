@@ -10,18 +10,18 @@ class SubInformList(InformList):
 
     def addInform(self, other):
         select = self.db.select_items('student', '*', '%s%s%s' % ('where studNum=\'', other.getStuNo(), '\''))
-        if len(select) == 0: # ²éÕÒ½øÐÐÔ¤¶¨µÄÑ§ÉúÊÇ·ñ´æÔÚ
+        if len(select) == 0: # ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
             return None
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
-        if len(select) == 0: # ²éÕÒÔ¤¶¨Ñ§ÉúµÄÑ§ÉúÊÇ·ñ´æÔÚ
+        if len(select) == 0: # ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
             return -1
         self.db.insert_values('subInfo', [other.getNo(), other.getStuNo(),
                                           other.getBookNo(), other.getTime()])
 
     def deleteInform(self, no):
         """
-        ´ÓÁÐ±íÖÐÉ¾³ýÄ³¸öÑ§ÉúËùÓÐµÄ½èÔÄÐÅÏ¢
-        :param no: Ñ§ÉúµÄÑ§ºÅ
+        ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½É¾ï¿½ï¿½Ä³ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+        :param no: Ñ§ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½
         :return:
         """
         self.db.delete_values('subInfo', '%s%s%s' % ('where studNo=\'', no, '\''))
@@ -61,3 +61,6 @@ class SubInformList(InformList):
 
     def getPreTime(self):
         pass
+
+    def closeDB(self):
+        self.db.close_database()

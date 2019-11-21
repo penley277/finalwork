@@ -1,4 +1,4 @@
-import numpy as np
+
 
 from DButil.DBO import DBO
 from list.InformList import InformList
@@ -115,12 +115,16 @@ class BorrowInformList(InformList):
             return None
         return bi
 
+    def closeDB(self):
+        self.db.close_database()
+
 
 if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     other1 = BorrowInfo(3, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
 
-    borrow.deleteInform()
+    borrow.deleteInform(2)
     borrow.outputInform()
     for i in range(10):
         print(borrow.topTenByCnt().pop(i))
+    borrow.closeDB()

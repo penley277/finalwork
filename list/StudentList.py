@@ -1,3 +1,4 @@
+
 from DButil.DBO import DBO
 from models.Student import Student
 
@@ -68,7 +69,8 @@ class StudentList(object):
             print('哪来的野生孩子？')
             return False
         student = Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
-        if oldPasswd != student.getPassWd():
+        print(student.getPassWd())
+        if student.getPassWd() != oldPasswd:
             print('密码错了')
             return False
         self.db.update_values('student', {'passwd':newPassWd}, '%s%s%s' % ('where studNo=\'', no, '\''))
@@ -101,3 +103,10 @@ class StudentList(object):
                                   classNum, phoneNum, '')
                 self.addStu(student)
         file_to_read.close()
+
+    def closeDB(self):
+        self.db.close_database()
+
+if __name__ == '__main__':
+    stu = StudentList('system.db')
+    stu.setPassWdByIdPasswd('1113000002', '000000', 'song')

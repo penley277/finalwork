@@ -77,3 +77,5 @@ class ManagerList(object):
         if oldPasswd == manager.getPasswd():
             self.db.update_values('manager', {'passwd': newPasswd}, '%s%s%s' % ('where managerID=\'', num, '\''))
 
+    def closeDB(self):
+        self.db.close_database()
