@@ -63,18 +63,8 @@ class StudentList(object):
             return None
         return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
 
-    def setPassWdByIdPasswd(self, no, oldPasswd, newPassWd):
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where studNo=\'', no, '\''))
-        if len(select) == 0:
-            print('哪来的野生孩子？')
-            return False
-        student = Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
-        print(student.getPassWd())
-        if student.getPassWd() != oldPasswd:
-            print('密码错了')
-            return False
+    def setPassWdByIdPasswd(self, no, newPassWd):
         self.db.update_values('student', {'passwd':newPassWd}, '%s%s%s' % ('where studNo=\'', no, '\''))
-        return True
 
     def outputStuList(self):
         """
