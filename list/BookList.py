@@ -63,6 +63,35 @@ class BookList(object):
         """
         self.db.delete_values('book', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
+    def getBookByPublisher(self, publisher):
+        """
+        通过书籍的书号，获取书籍
+        :param author: 作者
+        :param num: 书籍的书号
+        :return: 返回书籍
+        """
+        select = self.db.select_items('book', '*', '%s%s%s' % ('where publisher=\'', publisher, '\''))
+
+        if len(select) == 0:
+            return None
+
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
+                           select[0][6], select[0][7]))
+            i = i + 1
+        return bi
+
+    def setComment(self, no, comment):
+        book = self.getBookByNo(no)
+        if book.getComment() is None:
+            self.db.update_values('book', {'comment': comment+'`'},
+                                  '%s%s%s' % ('where bookNum=\'', no, '\''))
+        else:
+            self.db.update_values('book', {'comment': str(book.getComment())+comment+'`'},
+                              '%s%s%s' % ('where bookNum=\'', no, '\''))
+
     def outputBookList(self):
         """
         输出所有的图书信息
@@ -99,3 +128,5 @@ class BookList(object):
 if __name__ == '__main__':
     b = BookList('system.db')
     b.getBookByNo('XW3032').print()
+    b.setComment('XW3031', '很好')
+    b.setComment('XW3031', '很棒')

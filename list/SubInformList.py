@@ -9,19 +9,21 @@ class SubInformList(InformList):
         self.db = DBO(database_name)
 
     def addInform(self, other):
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where studNum=\'', other.getStuNo(), '\''))
-        if len(select) == 0: # ���ҽ���Ԥ����ѧ���Ƿ����
-            return None
+        """
+        添加订阅信息
+        :param other:
+        :return:
+        """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
-        if len(select) == 0: # ����Ԥ��ѧ����ѧ���Ƿ����
+        if len(select) == 0:
             return -1
         self.db.insert_values('subInfo', [other.getNo(), other.getStuNo(),
                                           other.getBookNo(), other.getTime()])
 
     def deleteInform(self, no):
         """
-        ���б���ɾ��ĳ��ѧ�����еĽ�����Ϣ
-        :param no: ѧ����ѧ��
+        根据学号删除所有的预订信息
+        :param no: 学号
         :return:
         """
         self.db.delete_values('subInfo', '%s%s%s' % ('where studNo=\'', no, '\''))
