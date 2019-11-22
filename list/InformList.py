@@ -8,7 +8,7 @@ class InformList(object):
         pass
 
     @abc.abstractmethod
-    def deleteInform(self, object):
+    def deleteInform(self, object1, object2):
         pass
 
     @abc.abstractmethod

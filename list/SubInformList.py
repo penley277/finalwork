@@ -16,17 +16,17 @@ class SubInformList(InformList):
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         if len(select) == 0:
-            return -1
+            return False
         self.db.insert_values('subInfo', [other.getNo(), other.getStuNo(),
                                           other.getBookNo(), other.getTime()])
 
-    def deleteInform(self, no):
+    def deleteInform(self, stuno, bookno):
         """
         根据学号删除所有的预订信息
         :param no: 学号
         :return:
         """
-        self.db.delete_values('subInfo', '%s%s%s' % ('where studNo=\'', no, '\''))
+        self.db.delete_values('subInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'',bookno, '\''))
 
     def getInformByStudNo(self, no):
         select = self.db.select_items('subInfo', '*', '%s%s%s' % ('where studNo=\'', no, '\''))

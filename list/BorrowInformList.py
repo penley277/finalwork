@@ -33,23 +33,18 @@ class BorrowInformList(InformList):
                               '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         return True
 
-    def deleteInform(self, no, comment=None):
+    def deleteInform(self, stuno, bookno):
         """
         删除借阅信息
         :param comment:
         :param no: 借阅信息序号
         :return: 删除成功返回True， 否则返回False
         """
-        select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where infoId=\'', no, '\''))
-        book = self.bookList.getBookByNo(select[0][2])
+        book = self.bookList.getBookByNo(bookno)
 
-        if len(select) == 0:
-            return None
-
-        self.db.delete_values('borrowInfo', '%s%s' % ('where infoId=', no))
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1, 'comment': (float(book.getComment()) + float(comment))/2.0},
+        self.db.delete_values('borrowInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'',bookno, '\''))
+        self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
-
 
     def getInformByStudNo(self, no):
         """
@@ -95,12 +90,12 @@ class BorrowInformList(InformList):
         :return: 返回借阅信息
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
-        if len(select) == 0: # 没有查询到记录
+        if len(select) == 0:  # 没有查询到记录
             return None
 
         i = 0
         bi = []
-        while i < len(select): # 将查询到的记录转化为借阅信息类
+        while i < len(select):  # 将查询到的记录转化为借阅信息类
             bi.append(BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
             i = i + 1
 
@@ -115,7 +110,7 @@ class BorrowInformList(InformList):
         :return: 需要设置续借信息，如果续借成功，返回True
         """
         list = self.getInformByStudNo(stu)
-        if list is None: # 如果没有查询到借阅信息
+        if list is None:  # 如果没有查询到借阅信息
             return False
 
         i = 0
@@ -138,7 +133,7 @@ class BorrowInformList(InformList):
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where finishTime=\'', time, '\''))
 
-        if len(select) == 0: #没有查询到
+        if len(select) == 0:  # 没有查询到
             return None
         i = 0
         bi = []
@@ -165,6 +160,7 @@ class BorrowInformList(InformList):
         for key in self.history:
             dict[key] = dict.get(key, 0) + 1
         d_order = sorted(dict.items(), key=lambda x: x[1], reverse=True)
+
         while len(d_order) < 10:  # 如果借阅数量总数不足十个， 加入空格补位置
             d_order.append((' ', ' '))
         return d_order
@@ -196,7 +192,10 @@ if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     book = BookList('system.db')
     other1 = BorrowInfo(2, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
+    #borrow.addInform(other1)
     for i in range(10):
         if borrow.topTenByCnt().pop(i)[0] != ' ':
             book.getBookByNo(borrow.topTenByCnt().pop(i)[0]).print()
+
+    borrow.deleteInform('1113000001', 'XW3003')
     borrow.closeDB()
