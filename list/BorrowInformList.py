@@ -1,5 +1,3 @@
-
-
 from DButil.DBO import DBO
 from list.InformList import InformList
 from list.StudentList import StudentList
@@ -24,15 +22,13 @@ class BorrowInformList(InformList):
         :return: 添加成功，返回True; 否则返回False
         """
         book = self.bookList.getBookByNo(other.getBookNo())
-        student = self.studList.getStuByNo(other.getStuNo)
+        student = self.studList.getStuByNo(other.getStuNo())
 
         if book.getBookCnt() == 0:  # 如果书籍已经借空
             return False
 
-        self.history.append(other.getBookNo())
         self.db.insert_values('borrowInfo', [other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
                                              other.getFinishTime()])
-
         self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
                               '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         return True
@@ -91,6 +87,12 @@ class BorrowInformList(InformList):
 
     def topTenByCnt(self):
 
+        select = self.db.select_items('borrowInfo', '*')
+        i = 0
+        while i < len(select):
+            self.history.append(select[i][2])
+            i = i + 1
+
         dict = {}
         for key in self.history:
             dict[key] = dict.get(key, 0) + 1
@@ -108,8 +110,7 @@ class BorrowInformList(InformList):
         i = 0
         bi = []
         while i < len(select):
-            bi.append(BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
-            self.history.append(select[i][2])
+            binfo = BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4])
             i = i + 1
         if len(select) == 0:
             return None
@@ -121,10 +122,7 @@ class BorrowInformList(InformList):
 
 if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
-    other1 = BorrowInfo(3, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
-
-    borrow.deleteInform(2)
-    borrow.outputInform()
+    other1 = BorrowInfo(2, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
     for i in range(10):
         print(borrow.topTenByCnt().pop(i))
     borrow.closeDB()
