@@ -7,12 +7,25 @@ from models.Book import Book
 class BookList(object):
 
     def __init__(self, db):
+        """
+        初始化链接database
+        :param db:
+        """
         self.db = DBO(db)
 
     def getDBInfo(self):
+        """
+        获取book表的信息
+        :return:
+        """
         self.db.get_table_info('book')
 
     def addBook(self, other):
+        """
+        添加书籍
+        :param other: 书籍信息
+        :return:
+        """
         self.db.insert_values('book', [other.getBookNo(), other.getBookName(),
                                        other.getAuthor(), other.getPublisher(),
                                        other.getBookCnt(), other.getBorrowCnt(),

@@ -39,7 +39,7 @@ class ManagerList(object):
         """
         select = self.db.select_items('manager', '*', '%s%s%s' % ('where name like \'%', name, '%\''))
         if len(select) == 0:
-            return None
+            return False
         i = 0
         bi = []
         while i < len(select):
@@ -65,8 +65,9 @@ class ManagerList(object):
         if manaType == 'stu' or manaType == 'book':
             self.db.update_values('manager', dict([('managerType', manaType)]),
                                   '%s%s%s' % ('where managerID=\'', num, '\''))
+            return True
         else:
-            print("修改的类型有误或者超出权限")
+            return False
 
     def changePasswd(self, num, oldPasswd, newPasswd):
         """

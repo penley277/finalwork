@@ -63,6 +63,7 @@ class BorrowInformList(InformList):
 
         if len(select) == 0:
             return None
+
         while i < len(select):
             bi.append(BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
             i = i + 1
@@ -76,14 +77,15 @@ class BorrowInformList(InformList):
         :return:
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where bookNo=\'', no, '\''))
+
+        if len(select) == 0:
+            return None
         i = 0
         bi = []
-
         while i < len(select):
             bi.append(BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
             i = i + 1
-        if len(select) == 0:
-            return None
+
         return bi
 
     def getInformBybTime(self, time):
@@ -93,13 +95,15 @@ class BorrowInformList(InformList):
         :return: 返回借阅信息
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
+        if len(select) == 0: # 没有查询到记录
+            return None
+
         i = 0
         bi = []
-        while i < len(select):
+        while i < len(select): # 将查询到的记录转化为借阅信息类
             bi.append(BorrowInfo(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
             i = i + 1
-        if len(select) == 0:
-            return None
+
         return bi
 
     def addInformLast(self, stu, newBTime, newFTime):
@@ -108,15 +112,18 @@ class BorrowInformList(InformList):
         :param stu: 学号
         :param newBTime: 新的借阅时间
         :param newFTime: 新的换书时间
-        :return:
+        :return: 需要设置续借信息，如果续借成功，返回True
         """
         list = self.getInformByStudNo(stu)
-        if len(list) == 0:
-            return None
+        if list is None: # 如果没有查询到借阅信息
+            return False
 
         i = 0
         while i < len(list):
+            # 删除原有的信息
             self.deleteInform(list[i].getNo())
+
+            # 更新信息
             list[i].setBorrowTime(newBTime)
             list[i].setFinishTime(newFTime)
             self.addInform(list[i])
@@ -125,11 +132,13 @@ class BorrowInformList(InformList):
 
     def getInformByfTime(self, time):
         """
-        :param time:
-        :return:
+        根据借阅的结束时间进行查询
+        :param time: 结束时间
+        :return: 如果没有查询到元素，返回False，否则返回True
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where finishTime=\'', time, '\''))
-        if len(select) == 0:
+
+        if len(select) == 0: #没有查询到
             return None
         i = 0
         bi = []
@@ -140,8 +149,13 @@ class BorrowInformList(InformList):
         return bi
 
     def topTenByCnt(self):
-
+        """
+        获取借阅量最多的10本书籍
+        :return: 返回借阅量由高到低的字典， 包含学生的学号以及借阅的次序
+        TODO: 还有问题啊！！！！
+        """
         select = self.db.select_items('borrowInfo', '*')
+
         i = 0
         while i < len(select):
             self.history.append(select[i][2])
@@ -171,6 +185,10 @@ class BorrowInformList(InformList):
         return bi
 
     def closeDB(self):
+        """
+        关闭数据库的接口
+        :return: 无
+        """
         self.db.close_database()
 
 
