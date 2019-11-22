@@ -122,7 +122,11 @@ class BorrowInformList(InformList):
 
 if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
+    book = BookList('system.db')
     other1 = BorrowInfo(2, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
+    print(borrow.getInformByTime('2019/10/12')[0].getBookNo())
+
     for i in range(10):
-        print(borrow.topTenByCnt().pop(i))
+        if borrow.topTenByCnt().pop(i)[0] != ' ':
+            book.getBookByNo(borrow.topTenByCnt().pop(i)[0]).print()
     borrow.closeDB()
