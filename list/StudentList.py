@@ -47,10 +47,15 @@ class StudentList(object):
         :param name: 想要找到的学生的名字
         :return: 某个学生列表
         """
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where studName=\'', name, '\''))
+        select = self.db.select_items('student', '*', '%s%s%s' % ('where studName like \'%', name, '%\''))
         if len(select) == 0:
             return None
-        return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Student(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5]))
+            i = i + 1
+        return bi
 
     def getStuByPhNum(self, phone):
         """
@@ -58,10 +63,15 @@ class StudentList(object):
         :param phone: 想要找到的学生的手机号
         :return: 某个学生
         """
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where phoneNum=\'', phone, '\''))
+        select = self.db.select_items('student', '*', '%s%s%s' % ('where phoneNum like \'%', phone, '%\''))
         if len(select) == 0:
             return None
-        return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Student(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5]))
+            i = i + 1
+        return bi
 
     def setPassWdByIdPasswd(self, no, newPassWd):
         self.db.update_values('student', {'passwd':newPassWd}, '%s%s%s' % ('where studNo=\'', no, '\''))
@@ -72,9 +82,14 @@ class StudentList(object):
         :return: 所有学生的信息
         """
         select = self.db.select_items('student', '*')
-        if len(select) == 0:
-            return None
-        return select
+        if select is None:
+            return False
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Student(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5]))
+            i = i + 1
+        return bi
 
     def addStuByFile(self, filename):
         """
@@ -99,4 +114,5 @@ class StudentList(object):
 
 if __name__ == '__main__':
     stu = StudentList('system.db')
-    stu.setPassWdByIdPasswd('1113000002', '000000', 'song')
+    for i in range(5):
+        stu.getStuByName('李')[i].print()

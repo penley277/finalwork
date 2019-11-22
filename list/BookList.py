@@ -24,11 +24,17 @@ class BookList(object):
         :param name: 书籍的名字
         :return: 返回书籍
         """
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where bookName=\'', name, '\''))
-        if len(select) == 0:
-            return None
-        return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                    select[0][6], select[0][7])
+        select = self.db.select_items('book', '*', '%s%s%s' % ('where bookName like \'%', name, '%\''))
+        if select is None:
+            return False
+
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
+                           select[i][6], select[i][7]))
+            i = i + 1
+        return bi
 
     def getBookByNo(self, num):
         """
@@ -37,10 +43,11 @@ class BookList(object):
         :return: 返回书籍
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', num, '\''))
-        if len(select) == 0:
-            return None
+
+        if select is None:
+            return False
         return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                    select[0][6], select[0][7])
+                           select[0][6], select[0][7])
 
     def getBookByAuthor(self, author):
         """
@@ -49,11 +56,14 @@ class BookList(object):
         :param num: 书籍的书号
         :return: 返回书籍
         """
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where author=\'', author, '\''))
-        if len(select) == 0:
-            return None
-        return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                    select[0][6], select[0][7])
+        select = self.db.select_items('book', '*', '%s%s%s' % ('where author like \'%', author, '%\''))
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
+                           select[i][6], select[i][7]))
+            i = i + 1
+        return bi
 
     def removeBook(self, num):
         """
@@ -70,7 +80,7 @@ class BookList(object):
         :param num: 书籍的书号
         :return: 返回书籍
         """
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where publisher=\'', publisher, '\''))
+        select = self.db.select_items('book', '*', '%s%s%s' % ('where publisher like \'%', publisher, '%\''))
 
         if len(select) == 0:
             return None
@@ -78,8 +88,8 @@ class BookList(object):
         i = 0
         bi = []
         while i < len(select):
-            bi.append(Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                           select[0][6], select[0][7]))
+            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
+                           select[i][6], select[i][7]))
             i = i + 1
         return bi
 
@@ -127,6 +137,7 @@ class BookList(object):
 
 if __name__ == '__main__':
     b = BookList('system.db')
-    b.getBookByNo('XW3032').print()
-    b.setComment('XW3031', '很好')
-    b.setComment('XW3031', '很棒')
+    book = Book('1','2323','323','23232',2,3,'2018/10/12')
+    #b.addBook(book)
+    for i in range(5):
+        print(b.getBookByPublisher('清华')[i].getBookName())

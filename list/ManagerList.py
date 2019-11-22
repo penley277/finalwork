@@ -37,10 +37,15 @@ class ManagerList(object):
         :param name: 管理员姓名
         :return: 管理员列表
         """
-        select = self.db.select_items('manager', '*', '%s%s%s' % ('where name=\'', name, '\''))
+        select = self.db.select_items('manager', '*', '%s%s%s' % ('where name like \'%', name, '%\''))
         if len(select) == 0:
             return None
-        return Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Manager(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
+            i = i + 1
+        return bi
 
     def removeManager(self, num):
         """

@@ -178,8 +178,6 @@ if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     book = BookList('system.db')
     other1 = BorrowInfo(2, '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
-    borrow.addInform()
-    borrow.setComment(2, '5')
     for i in range(10):
         if borrow.topTenByCnt().pop(i)[0] != ' ':
             book.getBookByNo(borrow.topTenByCnt().pop(i)[0]).print()
