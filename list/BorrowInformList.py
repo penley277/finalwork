@@ -199,9 +199,7 @@ class BorrowInformList(InformList):
 if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     book = BookList('system.db')
-    other1 = BorrowInfo( '1113000001', 'XW3003', '2019/10/12', '2019/11/12')
-
-    borrow.deleteInform('1113000001', 'XW3003')
+    other1 = BorrowInfo('1113000001', 'XW3005', '2019/10/12', '2019/11/12')
     borrow.addInform(other1)
     for i in range(10):
         if borrow.topTenByCnt().pop(i)[0] != ' ':
