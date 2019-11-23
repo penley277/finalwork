@@ -23,7 +23,7 @@ class BookList(object):
     def addBook(self, other):
         """
         添加书籍
-        :param other: 书籍信息
+        :param other: 书籍信息类
         :return:
         """
         self.db.insert_values('book', [other.getBookNo(), other.getBookName(),
@@ -57,10 +57,11 @@ class BookList(object):
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
-        if select is None:
+        if len(select) == 0:
             return False
+
         return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                           select[0][6], select[0][7])
+                    select[0][6], select[0][7])
 
     def getBookByAuthor(self, author):
         """
@@ -109,11 +110,11 @@ class BookList(object):
     def setComment(self, no, comment):
         book = self.getBookByNo(no)
         if book.getComment() is None:
-            self.db.update_values('book', {'comment': comment+'`'},
+            self.db.update_values('book', {'comment': comment + '`'},
                                   '%s%s%s' % ('where bookNum=\'', no, '\''))
         else:
-            self.db.update_values('book', {'comment': str(book.getComment())+comment+'`'},
-                              '%s%s%s' % ('where bookNum=\'', no, '\''))
+            self.db.update_values('book', {'comment': str(book.getComment()) + comment + '`'},
+                                  '%s%s%s' % ('where bookNum=\'', no, '\''))
 
     def outputBookList(self):
         """
@@ -150,7 +151,4 @@ class BookList(object):
 
 if __name__ == '__main__':
     b = BookList('system.db')
-    book = Book('1','2323','323','23232',2,3,'2018/10/12')
-    #b.addBook(book)
-    for i in range(5):
-        print(b.getBookByPublisher('清华')[i].getBookName())
+    print(b.getBookByNo('Xw3031'))

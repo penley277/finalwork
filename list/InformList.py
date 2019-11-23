@@ -4,7 +4,7 @@ import abc
 class InformList(object):
 
     @abc.abstractmethod
-    def addInform(self, object):
+    def addInform(self, object1):
         """
         添加信息
         :param object: 借阅信息或者预约信息

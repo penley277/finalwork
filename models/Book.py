@@ -129,7 +129,8 @@ class Book(object):
         获取书籍的评论
         :return:
         """
-        return self.comment
+        comment = [i for i in self.comment.split('`')]  # 根据空格，将值读出
+        return comment
 
     def setComment(self, comment):
         """

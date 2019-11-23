@@ -7,3 +7,4 @@ BookCnt0 = 2 # 书籍借空
 
 NoBorrowInform = False # 没有借阅信息
 
+

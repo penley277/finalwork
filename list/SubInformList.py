@@ -4,6 +4,7 @@ import string
 from DButil.DBO import DBO
 from list.InformList import InformList
 from models.SubInform import SubInform
+from util import Error, Success
 
 
 class SubInformList(InformList):
@@ -19,12 +20,17 @@ class SubInformList(InformList):
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         if len(select) == 0:
-            return False
+            return Error.NoneBook
+
+        if select[0][4] == 0:
+            return Error.BookCnt0
 
         # 预约id随机生成
         other.setNo(''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20)))
         self.db.insert_values('subInfo', [other.getNo(), other.getStuNo(),
                                           other.getBookNo(), other.getTime()])
+        return Success.FinishSub
+
 
     def deleteInform(self, stuno, bookno):
         """

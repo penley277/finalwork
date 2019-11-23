@@ -1,5 +1,4 @@
 import datetime
-import time
 
 
 class BorrowInfo(object):
@@ -19,9 +18,18 @@ class BorrowInfo(object):
         self.finishTime = finishTime
 
     def getNo(self):
+        """
+        借阅信息的id号
+        :return: 借阅信息的id
+        """
         return self.no
 
     def setNo(self, no):
+        """
+        设置借阅信息的id
+        :param no:
+        :return:
+        """
         self.no = no
 
     def getStuNo(self):
@@ -29,7 +37,7 @@ class BorrowInfo(object):
         获取学生号
         :return: 返回学生号
         """
-        return  self.studNo
+        return self.studNo
 
     def setStuNo(self, studNo):
         """
@@ -44,7 +52,7 @@ class BorrowInfo(object):
         获取书号
         :return: 书号
         """
-        return  self.bookNo
+        return self.bookNo
 
     def setBookNo(self, bookNo):
         """
@@ -53,7 +61,6 @@ class BorrowInfo(object):
         :return: 无
         """
         self.bookNo = bookNo
-
 
     def getBorrowTime(self):
         """
@@ -81,10 +88,7 @@ class BorrowInfo(object):
         """
         self.finishTime = finishTime
 
-    def getReturnTime(self, startTime):
-        year, month, day = [i for i in startTime.split('-')]  # 根据空格，将值读出
-        time = datetime.date(int(year), int(month), int(day)) + datetime.timedelta(days=30)
-        return time.isoformat()
+
 
     def print(self):
         print(self.studNo, self.bookNo, self.borrowTime, self.finishTime)
