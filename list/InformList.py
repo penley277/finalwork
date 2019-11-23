@@ -5,6 +5,11 @@ class InformList(object):
 
     @abc.abstractmethod
     def addInform(self, object):
+        """
+        添加信息
+        :param object: 借阅信息或者预约信息
+        :return:
+        """
         pass
 
     @abc.abstractmethod

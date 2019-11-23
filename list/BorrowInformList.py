@@ -152,7 +152,7 @@ class BorrowInformList(InformList):
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where finishTime=\'', time, '\''))
 
         if len(select) == 0:  # 没有查询到
-            return None
+            return Error.NoBorrowInform
         i = 0
         bi = []
         while i < len(select):
@@ -197,7 +197,7 @@ class BorrowInformList(InformList):
             bi.append(binfo)
             i = i + 1
         if len(select) == 0:
-            return None
+            return Error.NoBorrowInform
         return bi
 
     def closeDB(self):

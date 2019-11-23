@@ -22,7 +22,7 @@ class StudentList(object):
                                           stu.getMajor(), stu.getClassNum(),
                                           stu.getPhoneNum(), stu.getPassWd()])
 
-    def removeBook(self, num):
+    def removeStu(self, num):
         """
         从数据库中删除学生
         :param num: 删除学生的学号
