@@ -115,3 +115,8 @@ class SubInformList(InformList):
 
     def closeDB(self):
         self.db.close_database()
+
+if __name__ == '__main__':
+    sub = SubInformList('system.db')
+    print(sub.addInformByNos('1113000001', 'XW3004'))
+

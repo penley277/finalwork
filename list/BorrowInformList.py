@@ -236,7 +236,7 @@ if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     book = BookList('system.db')
     other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
-    #borrow.addInformByNos('1113000001', 'XW3004')
+    #
     borrow.addInformLast('1113000001')
     print(borrow.deleteInformWithComment('1113000001', 'XW3005', '好看'))
     borrow.closeDB()
