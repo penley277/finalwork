@@ -1,14 +1,14 @@
 import sys
+import qdarkstyle
+from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QCoreApplication
 
 from ui_others import Ui_Login
 
 if __name__ == "__main__":
 
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("./bms.jpg"))
     # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())

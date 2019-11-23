@@ -72,29 +72,15 @@ class BorrowInformList(InformList):
         """
         book = self.bookList.getBookByNo(bookno)
 
+        if book is False:
+            return Error.NoneBook
+
         # 通过操纵数据库删除信息
         self.db.delete_values('borrowInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'', bookno, '\''))
         # 更新借阅数量和剩余数量
         self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
         self.bookList.setComment(bookno, comment)
-
-        return Success.FinishReturn
-
-    def deleteInform(self, stuno, bookno):
-        """
-        删除借阅信息，使用学生和书号，删除借阅信息
-        :param stuno: 学生学号
-        :param bookno: 书籍书号
-        :return: 删除成功返回True， 否则返回False
-        """
-        book = self.bookList.getBookByNo(bookno)
-
-        # 通过操纵数据库删除信息
-        self.db.delete_values('borrowInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'', bookno, '\''))
-        # 更新借阅数量和剩余数量
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
-                              '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
 
         return Success.FinishReturn
 
@@ -170,7 +156,7 @@ class BorrowInformList(InformList):
 
             # 更新信息
             rtime= self.getReturnTime(datetime.date.today().isoformat())
-            select = self.db.update_values('borrowInfo', {'borrowTime': list[i].getBorrowTime(),
+            self.db.update_values('borrowInfo', {'borrowTime': list[i].getBorrowTime(),
                                                           'finishTime': rtime},
                                            '%s%s%s' % ('where studNo=\'', stu, '\''))
             i = i + 1
@@ -252,5 +238,5 @@ if __name__ == '__main__':
     other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
     #borrow.addInformByNos('1113000001', 'XW3004')
     borrow.addInformLast('1113000001')
-    print(borrow.outputInform())
+    print(borrow.deleteInformWithComment('1113000001', 'XW3005', '好看'))
     borrow.closeDB()

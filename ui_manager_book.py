@@ -4,13 +4,18 @@ from PyQt5.QtWidgets import *
 from gui.mainwindow_manager_book import Ui_MainWindow_manager_book
 from gui.book_alter import Ui_Dialog_book_alter
 
+from list.ManagerList import ManagerList
+
 
 class Ui_manager_book(QMainWindow, Ui_MainWindow_manager_book):
     """图书管理"""
-    def __init__(self):
+    def __init__(self, manager_book_id):
         super(Ui_manager_book, self).__init__()
         self.setupUi(self)
         self.setWindowTitle(" ")
+
+        self.manager_book_id = manager_book_id
+        self.manager_book, self.manager_book_list = self.get_manager_book()
 
         # button连接界面
         self.ui_book_alter = Ui_book_alter()
@@ -36,13 +41,18 @@ class Ui_manager_book(QMainWindow, Ui_MainWindow_manager_book):
     def menuTriggered(self, q):
         if q.text() == "密码更改":
             from ui_others import Ui_pw_change
-            self.ui_pw_change = Ui_pw_change()
+            self.ui_pw_change = Ui_pw_change('manager', self.manager_book, self.manager_book_list)
             self.ui_pw_change.show()
         if q.text() == "注销":
             from ui_others import Ui_Login
             self.ui_Login = Ui_Login()
             self.ui_Login.show()
             self.close()
+
+    def get_manager_book(self):
+        manager_book_list = ManagerList('system.db')
+        manager_book = manager_book_list.getManagerById(self.manager_book_id)
+        return manager_book, manager_book_list
 
 
 class Ui_book_alter(QDialog, Ui_Dialog_book_alter):

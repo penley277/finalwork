@@ -3,7 +3,7 @@ from list.ManagerList import ManagerList
 
 class AdminManager(object):
 
-    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="admin"):
+    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type='系统管理员'):
         """
         StuManager class is the Manager of Student
         :param managerID: the id number of student manager
@@ -13,14 +13,4 @@ class AdminManager(object):
         :param type: type of the manager
         """
         super().__init__(managerID, name, phone, passwd)
-        self.managerList = ManagerList('system.db')
         self.type = type
-
-    def addManager(self, other):
-        self.managerList.addManager(other)
-
-    def changeTypeofManager(self, id, type):
-        self.managerList.changeType(id, type)
-
-    def removeManager(self, id):
-        self.managerList.removeManager(id)

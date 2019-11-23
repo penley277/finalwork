@@ -6,13 +6,18 @@ from gui.stu_add import Ui_Dialog_stu_add
 from gui.stu_alter import Ui_Dialog_stu_alter
 from gui.stu_delete import Ui_Dialog_stu_delete
 
+from list.ManagerList import ManagerList
+
 
 class Ui_manager_stu(QMainWindow, Ui_MainWindow_manager_stu):
     """学生管理"""
-    def __init__(self):
+    def __init__(self, manager_stu_id):
         super(Ui_manager_stu, self).__init__()
         self.setupUi(self)
         self.setWindowTitle(" ")
+
+        self.manager_stu_id = manager_stu_id
+        self.manager_stu, self.manager_stu_list = self.get_manager_stu()
 
         # button连接界面
         self.ui_stu_add = Ui_stu_add()
@@ -48,13 +53,18 @@ class Ui_manager_stu(QMainWindow, Ui_MainWindow_manager_stu):
     def menuTriggered(self, q):
         if q.text() == "密码更改":
             from ui_others import Ui_pw_change
-            self.ui_pw_change = Ui_pw_change()
+            self.ui_pw_change = Ui_pw_change('manager', self.manager_stu, self.manager_stu_list)
             self.ui_pw_change.show()
         if q.text() == "注销":
             from ui_others import Ui_Login
             self.ui_Login = Ui_Login()
             self.ui_Login.show()
             self.close()
+
+    def get_manager_stu(self):
+        manager_stu_list = ManagerList('system.db')
+        manager_stu = manager_stu_list.getManagerById(self.manager_stu_id)
+        return manager_stu, manager_stu_list
 
 
 class Ui_stu_add(QDialog, Ui_Dialog_stu_add):

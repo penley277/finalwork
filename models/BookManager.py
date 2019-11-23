@@ -4,7 +4,7 @@ from list.BookList import BookList
 
 class BookManager(Manager):
 
-    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type="book"):
+    def __init__(self, managerID=None, name=None, phone=None, passwd=None, type='图书管理员'):
         """
         StuManager class is the Manager of Student
         :param managerID: the id number of student manager

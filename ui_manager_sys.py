@@ -6,14 +6,19 @@ from gui.sys_add import Ui_Dialog_sys_add
 from gui.sys_delete import Ui_Dialog_stu_delete
 from gui.sys_alter import Ui_Dialog_stu_alter
 
+from list.ManagerList import ManagerList
+
 
 class Ui_manager_sys(QMainWindow, Ui_MainWindow_manager_sys):
     """系统管理"""
 
-    def __init__(self):
+    def __init__(self, manager_sys_id):
         super(Ui_manager_sys, self).__init__()
         self.setupUi(self)
         self.setWindowTitle(" ")
+
+        self.manager_sys_id = manager_sys_id
+        self.manager_sys, self.manager_sys_list = self.get_manager_sys()
 
         # button连接界面
         self.ui_sys_add = Ui_sys_add()
@@ -43,13 +48,18 @@ class Ui_manager_sys(QMainWindow, Ui_MainWindow_manager_sys):
     def menuTriggered(self, q):
         if q.text() == "密码更改":
             from ui_others import Ui_pw_change
-            self.ui_pw_change = Ui_pw_change()
+            self.ui_pw_change = Ui_pw_change('manager', self.manager_sys, self.manager_sys_list)
             self.ui_pw_change.show()
         if q.text() == "注销":
             from ui_others import Ui_Login
             self.ui_Login = Ui_Login()
             self.ui_Login.show()
             self.close()
+
+    def get_manager_sys(self):
+        manager_sys_list = ManagerList('system.db')
+        manager_sys = manager_sys_list.getManagerById(self.manager_sys_id)
+        return manager_sys, manager_sys_list
 
 
 class Ui_sys_add(QDialog, Ui_Dialog_sys_add):

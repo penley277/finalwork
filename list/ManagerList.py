@@ -85,3 +85,8 @@ class ManagerList(object):
 
     def closeDB(self):
         self.db.close_database()
+
+
+if __name__ == '__main__':
+    l = ManagerList('system.db')
+    print(l.getManagerById('101'))
