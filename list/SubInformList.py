@@ -1,3 +1,6 @@
+import random
+import string
+
 from DButil.DBO import DBO
 from list.InformList import InformList
 from models.SubInform import SubInform
@@ -17,48 +20,64 @@ class SubInformList(InformList):
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         if len(select) == 0:
             return False
+
+        # 预约id随机生成
+        other.setNo(''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20)))
         self.db.insert_values('subInfo', [other.getNo(), other.getStuNo(),
                                           other.getBookNo(), other.getTime()])
 
     def deleteInform(self, stuno, bookno):
         """
-        根据学号删除所有的预订信息
+        根据学号和书号删除某条借阅信息
         :param no: 学号
         :return:
         """
-        self.db.delete_values('subInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'',bookno, '\''))
+        self.db.delete_values('subInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'', bookno, '\''))
 
     def getInformByStudNo(self, no):
         select = self.db.select_items('subInfo', '*', '%s%s%s' % ('where studNo=\'', no, '\''))
+
+        if len(select) == 0:
+            return None
+
         i = 0
         bi = []
         while i < len(select):
             bi.append(SubInform(select[i][0], select[i][1], select[i][2], select[i][3]))
             i = i + 1
-        if len(select) == 0:
-            return None
+
         return bi
 
     def getInformByBookNo(self, no):
         select = self.db.select_items('subInfo', '*', '%s%s%s' % ('where bookNo=\'', no, '\''))
+        if len(select) == 0:
+            return None
+
         i = 0
         bi = []
         while i < len(select):
             bi.append(SubInform(select[i][0], select[i][1], select[i][2], select[i][3]))
             i = i + 1
-        if len(select) == 0:
-            return None
+
         return bi
 
     def getInformByTime(self, time):
+        """
+        通过日期选择预约信息
+        :param time:
+        :return:
+        """
         select = self.db.select_items('subInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
+
+        if len(select) == 0:
+            return None
+
         i = 0
         bi = []
         while i < len(select):
             bi.append(SubInform(select[i][0], select[i][1], select[i][2], select[i][3]))
             i = i + 1
-        if len(select) == 0:
-            return None
+
         return bi
 
     def getPreTime(self):

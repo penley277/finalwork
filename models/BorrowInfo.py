@@ -3,7 +3,7 @@ import time
 
 class BorrowInfo(object):
 
-    def __init__(self, no, studNo, bookNo, borrowTime, finishTime):
+    def __init__(self, studNo, bookNo, borrowTime, finishTime):
         """
         借阅信息的初始化类型，建立借阅信息
         :param studNo: 学生号
@@ -11,7 +11,7 @@ class BorrowInfo(object):
         :param borrowTime: 借阅的开始时间
         :param finishTime: 借阅的结束时间
         """
-        self.no = no
+        self.no = ''
         self.studNo = studNo
         self.bookNo = bookNo
         self.borrowTime = borrowTime
@@ -19,6 +19,9 @@ class BorrowInfo(object):
 
     def getNo(self):
         return self.no
+
+    def setNo(self, no):
+        self.no = no
 
     def getStuNo(self):
         """
@@ -73,8 +76,7 @@ class BorrowInfo(object):
         """
 
         :param self:
-        :return:
-        :TODO: 进行时间格式的统一
+        :return: 无
         """
         self.finishTime = finishTime
 
