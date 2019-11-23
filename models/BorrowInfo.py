@@ -1,3 +1,4 @@
+import datetime
 import time
 
 
@@ -79,6 +80,11 @@ class BorrowInfo(object):
         :return: 无
         """
         self.finishTime = finishTime
+
+    def getReturnTime(self, startTime):
+        year, month, day = [i for i in startTime.split('-')]  # 根据空格，将值读出
+        time = datetime.date(int(year), int(month), int(day)) + datetime.timedelta(days=30)
+        return time.isoformat()
 
     def print(self):
         print(self.studNo, self.bookNo, self.borrowTime, self.finishTime)

@@ -9,6 +9,9 @@ import datetime
 from models.BorrowInfo import BorrowInfo
 import random
 
+from util import Error, Success
+
+
 class BorrowInformList(InformList):
 
     def __init__(self, database_name):
@@ -28,17 +31,20 @@ class BorrowInformList(InformList):
         :return: 添加成功，返回True; 否则返回False
         """
         book = self.bookList.getBookByNo(other.getBookNo())
+        if book is False:
+            return Error.NoneBook
+
         student = self.studList.getStuByNo(other.getStuNo())
 
         if book.getBookCnt() == 0:  # 如果书籍已经借空
-            return False
+            return Error.BookCnt0
 
         other.setNo(''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20)))
         self.db.insert_values('borrowInfo', [other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
                                              other.getFinishTime()])
         self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
                               '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
-        return True
+        return Success.FinishBorrow
 
     def deleteInform(self, stuno, bookno):
         """
@@ -55,6 +61,8 @@ class BorrowInformList(InformList):
         self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
 
+        return Success.FinishReturn
+
     def getInformByStudNo(self, no):
         """
         根据学号，列出所有的借阅书籍
@@ -67,7 +75,7 @@ class BorrowInformList(InformList):
 
         # 如果没有选择到信息，返回空
         if len(select) == 0:
-            return None
+            return Error.NoBorrowInform
 
         while i < len(select):
             bi.append(BorrowInfo(select[i][1], select[i][2], select[i][3], select[i][4]))
@@ -83,7 +91,7 @@ class BorrowInformList(InformList):
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where bookNo=\'', no, '\''))
 
         if len(select) == 0:
-            return None
+            return Error.NoBorrowInform
         i = 0
         bi = []
         while i < len(select):
@@ -100,7 +108,7 @@ class BorrowInformList(InformList):
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where borrowTime=\'', time, '\''))
         if len(select) == 0:  # 没有查询到记录
-            return None
+            return Error.NoBorrowInform
 
         i = 0
         bi = []
@@ -110,7 +118,7 @@ class BorrowInformList(InformList):
 
         return bi
 
-    def addInformLast(self, stu, newBTime, newFTime):
+    def addInformLast(self, stu):
         """
         按照学号续借所有的书籍
         :param stu: 学号
@@ -119,18 +127,21 @@ class BorrowInformList(InformList):
         :return: 需要设置续借信息，如果续借成功，返回True
         """
         list = self.getInformByStudNo(stu)
-        if list is None:  # 如果没有查询到借阅信息
-            return False
+        if list is False:  # 如果没有查询到借阅信息
+            return Error.NoBorrowInform
 
         i = 0
         while i < len(list):
             # 删除原有的信息
+            self.deleteInform(list[i].getStuNo(), list[i].getBookNo())
             # 更新信息
-            list[i].setBorrowTime(newBTime)
-            list[i].setFinishTime(newFTime)
+            list[i].setBorrowTime(list[i].getBorrowTime())
+            year, month, day = [i for i in list[i].getFinishTime().split('-')]  # 根据空格，将值读出
+            time = datetime.date(int(year), int(month), int(day))+ datetime.timedelta(days=30)
+            list[i].setFinishTime(time.isoformat())
             self.addInform(list[i])
             i = i + 1
-        return True
+        return Success.FinishBorrow
 
     def getInformByfTime(self, time):
         """
@@ -170,6 +181,7 @@ class BorrowInformList(InformList):
 
         while len(d_order) < 10:  # 如果借阅数量总数不足十个， 加入空格补位置
             d_order.append((' ', ' '))
+
         return d_order
 
     def outputInform(self):
@@ -199,9 +211,8 @@ class BorrowInformList(InformList):
 if __name__ == '__main__':
     borrow = BorrowInformList('system.db')
     book = BookList('system.db')
-    other1 = BorrowInfo('1113000001', 'XW3005', '2019/10/12', '2019/11/12')
-    borrow.addInform(other1)
-    for i in range(10):
-        if borrow.topTenByCnt().pop(i)[0] != ' ':
-            book.getBookByNo(borrow.topTenByCnt().pop(i)[0]).print()
+    other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
+
+    list1 = borrow.topTenByCnt()
+    print(list1[0][0], list1[0][1])
     borrow.closeDB()
