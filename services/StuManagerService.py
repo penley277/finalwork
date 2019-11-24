@@ -129,6 +129,7 @@ class StuMangerService(object):
         self.studlist.addStuByFile(filename)
         return Success.FinishAddStu
 
+    #############################学生信息获取部分##############################
     def displayAllStu(self):
         """
         显示所有的学生信息
@@ -136,6 +137,50 @@ class StuMangerService(object):
         """
         return self.studlist.outputStuList()
 
+    def getStudentByNo(self, no):
+        """
+        通过学号获取某个学生的信息
+        :param no: 使用学生学号，进行精确查询
+        :return: 返回学生的信息列表
+        """
+        return self.studlist.getStuByNo(no)
+
+    def getStudentByName(self, name):
+        """
+        通过姓名，获取学生信息
+        :param name: 学生名字，模糊查询
+        :return:@see$Student 学生信息的列表
+                @see$Error: NoneStu
+        """
+        return self.studlist.getStuByParam('studName', name)
+
+    def getStudentByMajor(self, major):
+        """
+        通过专业，获取学生信息
+        :param major: 学生名字，模糊查询
+        :return:@see$Student 学生信息的列表
+                @see$Error: NoneStu
+        """
+        return self.studlist.getStuByParam('major', major)
+
+    def getStudentByClassNum(self, classNum):
+        """
+        通过班级，获取学生信息
+        :param classNum: 学生名字，模糊查询
+        :return:@see$Student 学生信息的列表
+                @see$Error: NoneStu
+        """
+        return self.studlist.getStuByParam('classNum', classNum)
+
+    def getStudentByPhoneNum(self, phone):
+        """
+        通过手机号，获取学生信息
+        :param phone: 手机号，模糊查询
+        :return:@see$Student 学生信息的列表
+                @see$Error: NoneStu
+        """
+        return self.studlist.getStuByParam('phoneNum', phone)
+    #############################学生信息获取部分##############################
 
 if __name__ == '__main__':
     stu = StuMangerService('../system.db')

@@ -30,25 +30,7 @@ class BookList(object):
         self.db.insert_values('book', [other.getBookNo(), other.getBookName(),
                                        other.getAuthor(), other.getPublisher(),
                                        other.getBookCnt(), other.getBorrowCnt(),
-                                       other.getPubTime(), " "])
-
-    def getBookByName(self, name):
-        """
-        通过书籍的名字，获取书籍
-        :param name: 书籍的名字
-        :return: 返回书籍
-        """
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where bookName like \'%', name, '%\''))
-        if len(select) == 0:
-            return Error.NoneBook
-
-        i = 0
-        bi = []
-        while i < len(select):
-            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
-                           select[i][6], select[i][7]))
-            i = i + 1
-        return bi
+                                       other.getPubTime(), other.getComment()])
 
     def getBookByNo(self, num):
         """
@@ -71,24 +53,9 @@ class BookList(object):
         self.db.update_values('book', {'bookCnt': bookCnt, 'borrowCnt': borrowCnt},
                               '%s%s%s' % ('where bookNum=\'', bookno, '\''))
 
-    def getBookByAuthor(self, author):
-        """
-        通过书籍的书号，获取书籍
-        :param author: 作者
-        :param num: 书籍的书号
-        :return: 返回书籍
-        """
-
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where author like \'%', author, '%\''))
-        if len(select) == 0:
-            return Error.NoneBook
-        i = 0
-        bi = []
-        while i < len(select):
-            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
-                           select[i][6], select[i][7]))
-            i = i + 1
-        return bi
+    def modifyBookByParam(self, param, bookno, inform):
+        self.db.update_values('book', {param: inform},
+                              '%s%s%s' % ('where bookNum=\'', bookno, '\''))
 
     def removeBook(self, num):
         """
@@ -98,14 +65,14 @@ class BookList(object):
         """
         self.db.delete_values('book', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
-    def getBookByPublisher(self, publisher):
+    def getBookByParam(self, param, publisher):
         """
-        通过书籍的书号，获取书籍
+        通过书籍的字段，获取书籍
         :param author: 作者
         :param num: 书籍的书号
         :return: 返回书籍
         """
-        select = self.db.select_items('book', '*', '%s%s%s' % ('where publisher like \'%', publisher, '%\''))
+        select = self.db.select_items('book', '*', '%s%s%s%s%s' % ('where ', param,' like \'%', publisher, '%\''))
 
         if len(select) == 0:
             return Error.NoneBook

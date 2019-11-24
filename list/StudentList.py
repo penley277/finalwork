@@ -1,4 +1,3 @@
-
 from DButil.DBO import DBO
 from models.Student import Student
 from util import Error
@@ -42,34 +41,24 @@ class StudentList(object):
             return Error.NoneStu
         return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
 
-
     def modify(self, param, no, name):
-        self.db.update_values('student', {'%s%s%s' % ('\'', param, '\''): name}, '%s%s%s' % ('where studNo=\'', no, '\''))
+        """
+        修改学生的某个属性的值，不包括学生号
+        :param param: 修改的属性名
+        :param no: 学号
+        :param name: 姓名
+        :return:
+        """
+        self.db.update_values('student', {'%s%s%s' % ('\'', param, '\''): name},
+                              '%s%s%s' % ('where studNo=\'', no, '\''))
 
-
-    def getStuByName(self, name):
+    def getStuByParam(self, param, other):
         """
         通过学生的名字，获取学生
         :param name: 想要找到的学生的名字
         :return: 某个学生列表
         """
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where studName like \'%', name, '%\''))
-        if len(select) == 0:
-            return Error.NoneStu
-        i = 0
-        bi = []
-        while i < len(select):
-            bi.append(Student(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5]))
-            i = i + 1
-        return bi
-
-    def getStuByPhNum(self, phone):
-        """
-        通过学生的手机号，获取该学生
-        :param phone: 想要找到的学生的手机号
-        :return: 某个学生
-        """
-        select = self.db.select_items('student', '*', '%s%s%s' % ('where phoneNum like \'%', phone, '%\''))
+        select = self.db.select_items('student', '*', '%s%s%s%s%s' % ('where ', param, ' like \'%', other, '%\''))
         if len(select) == 0:
             return Error.NoneStu
         i = 0
@@ -114,9 +103,3 @@ class StudentList(object):
 
     def closeDB(self):
         self.db.close_database()
-
-if __name__ == '__main__':
-    stu = StudentList('system.db')
-    stu.getStuByName('李').pop(0).print()
-    stu.getStuByNo('1113000001').print()
-    stu.getStuByPhNum('13941698396').pop(0).print()

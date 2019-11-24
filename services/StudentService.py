@@ -20,8 +20,9 @@ class StudentService(object):
         图书借阅功能
         :param stuno: 借阅学生的学号
         :param bookno: 借阅的书号
-        :return: @see$Error.NoneBook : 没有这本书的借阅信息
-                 @see$Error.FinishBorrow : 借阅成功
+        :return:@see$Error.NoneBook : 没有这本书的借阅信息
+                @see$Error.BookCnt0: 书籍已经借空，不能借阅
+                @see$Error.FinishBorrow : 借阅成功
         """
         book = self.booklist.getBookByNo(bookno)
         if book is Error.NoneBook:
@@ -29,6 +30,9 @@ class StudentService(object):
 
         if self.borrowlist.getInformByStudNoBookNo(stuno, bookno) is Error.NoBorrowInform:
             book = book.pop(0)
+            if book.getBookCnt() == 0:
+                return Error.BookCnt0
+
             self.borrowlist.addInformByNos(stuno, bookno)
             self.booklist.updateBorrowAndCnt(bookno, book.getBookCnt()-1, book.getBorrowCnt()+1)
             return Success.FinishBorrow
@@ -51,10 +55,6 @@ class StudentService(object):
         if book is Error.NoneBook:
             return Error.NoneBook
         book = self.booklist.getBookByNo(bookno).pop(0)
-
-        # 图书是否已经借空
-        if book.getBookCnt() == 0:
-            return Error.BookCnt0
 
         # 删除借阅记录
         self.borrowlist.deleteInform(stuno, bookno)
@@ -86,6 +86,30 @@ class StudentService(object):
             return Success.FinishRenew
 
         return Error.NoBorrowInform
+
+    ###############################图书信息的条件查询###########################
+    def getBookByNo(self, no):
+        """
+        使用书号，获取书籍信息
+        :param no: 书号
+        :return: 书籍信息的列表
+                @see$Error.NoneBook: 书籍不存在
+        """
+        return self.booklist.getBookByNo(no)
+
+    def getBookByName(self, name):
+        return self.booklist.getBookByParam('bookName', name)
+
+    def getBookByAuthor(self, author):
+        return self.booklist.getBookByParam('author', author)
+
+    def getBookByPublisher(self, publisher):
+        return self.booklist.getBookByParam('publisher', publisher)
+
+    def getBookByPubTime(self, time):
+        return self.booklist.getBookByParam('pubTime', time)
+
+    ###############################图书信息的条件查询###########################
 
     def renewAllBook(self, stuno):
         """
@@ -152,6 +176,7 @@ class StudentService(object):
 if __name__ == '__main__':
     stu = StudentService('../system.db')
     print(stu.subBook('1113000004', 'XW3004'))
+    stu.getBookByName('史').pop(0).print()
 
     b, t = stu.getTopBooks()
     b.pop(0).print()
