@@ -1,6 +1,7 @@
 import string
 
 from DButil.DBO import DBO
+
 from list.InformList import InformList
 from list.StudentList import StudentList
 from list.BookList import BookList
@@ -10,6 +11,7 @@ from models.BorrowInfo import BorrowInfo
 import random
 
 from util import Error, Success
+from util import util
 
 
 class BorrowInformList(InformList):
@@ -21,7 +23,7 @@ class BorrowInformList(InformList):
         """
         self.db = DBO(database_name)
         self.bookList = BookList(database_name)
-        self.studList = StudentList(database_name)
+        # self.studList = StudentList(database_name)
         self.history = []  # 借阅历史的buffer
 
     def addInform(self, other):
@@ -36,10 +38,12 @@ class BorrowInformList(InformList):
         if book is False:
             return Error.NoneBook
 
+        """
         student = self.studList.getStuByNo(other.getStuNo())
 
         if book.getBookCnt() == 0:  # 如果书籍已经借空
             return Error.BookCnt0
+        """
 
         other.setNo(''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20)))
         self.db.insert_values('borrowInfo', [other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
@@ -49,6 +53,8 @@ class BorrowInformList(InformList):
         return Success.FinishBorrow
 
     def addInformByNos(self, stuno, bookno):
+
+        """
         book = self.bookList.getBookByNo(bookno)
         if book is False:
             return Error.NoneBook
@@ -58,9 +64,10 @@ class BorrowInformList(InformList):
         if book.getBookCnt() == 0:  # 如果书籍已经借空
             return Error.BookCnt0
 
+        """
         no = ''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20))
         self.db.insert_values('borrowInfo', [no, stuno, bookno, datetime.date.today().isoformat(),
-                                             self.getReturnTime(datetime.date.today().isoformat())])
+                                             util.getReturnTime(datetime.date.today().isoformat())])
         return Success.FinishBorrow
 
     def deleteInformWithComment(self, stuno, bookno, comment=None):
@@ -70,6 +77,7 @@ class BorrowInformList(InformList):
         :param bookno: 书籍书号
         :return: 删除成功返回True， 否则返回False
         """
+
         book = self.bookList.getBookByNo(bookno)
 
         if book is False:
@@ -153,12 +161,11 @@ class BorrowInformList(InformList):
 
         i = 0
         while i < len(list):
-
             # 更新信息
-            rtime= self.getReturnTime(datetime.date.today().isoformat())
+            rtime = util.getReturnTime(datetime.date.today().isoformat())
             self.db.update_values('borrowInfo', {'borrowTime': list[i].getBorrowTime(),
-                                                          'finishTime': rtime},
-                                           '%s%s%s' % ('where studNo=\'', stu, '\''))
+                                                 'finishTime': rtime},
+                                  '%s%s%s' % ('where studNo=\'', stu, '\''))
             i = i + 1
         return Success.FinishBorrow
 
@@ -209,20 +216,17 @@ class BorrowInformList(InformList):
         :return: 返回借阅信息的列表
         """
         select = self.db.select_items('borrowInfo', '*')
+        if len(select) == 0:
+            return Error.NoBorrowInform
+
         i = 0
         bi = []
         while i < len(select):
             binfo = BorrowInfo(select[i][1], select[i][2], select[i][3], select[i][4])
             bi.append(binfo)
             i = i + 1
-        if len(select) == 0:
-            return Error.NoBorrowInform
-        return bi
 
-    def getReturnTime(self, startTime):
-        year, month, day = [i for i in startTime.split('-')]  # 根据空格，将值读出
-        time = datetime.date(int(year), int(month), int(day)) + datetime.timedelta(days=30)
-        return time.isoformat()
+        return bi
 
     def closeDB(self):
         """
@@ -237,6 +241,7 @@ if __name__ == '__main__':
     book = BookList('system.db')
     other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
     #
-    borrow.addInformLast('1113000001')
-    print(borrow.deleteInformWithComment('1113000001', 'XW3005', '好看'))
+    borrow.addInformByNos('1113000001', 'XW3005')
+    borrow.addInformByNos('1113000001', 'XW3001')
+    borrow.addInformByNos('1113000001', 'XW3002')
     borrow.closeDB()

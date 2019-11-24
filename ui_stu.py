@@ -15,6 +15,8 @@ from gui.book_read import Ui_Dialog_read
 from list.StudentList import StudentList
 from list.BorrowInformList import BorrowInformList
 from list.BookList import BookList
+from models.BorrowInfo import BorrowInfo
+from util import Error
 
 
 class Ui_stu(QMainWindow, Ui_MainWindow_stu):
@@ -149,10 +151,12 @@ class Ui_borrow_info(QDialog, Ui_Dialog_borrow_info):
         self.model.setHorizontalHeaderLabels(['书名', '借阅日期', '应还日期'])
 
         borrow_info = self.borrow_list.getInformByStudNo(self.stu_id)
-        if borrow_info is False:
-            borrow_info = []
+        if borrow_info == Error.NoBorrowInform:
+            borrow_info =  []
+
         for row, linedata in enumerate(borrow_info):
             for column, itemdata in enumerate(linedata):
+                print(linedata)
                 item = QStandardItem(str(itemdata)) if itemdata is not None else QStandardItem('')
                 item.setEditable(False)
 
@@ -295,8 +299,11 @@ class Ui_book_search(QWidget, Ui_Widget_book_search):
         if Type == '出版社':
             book_info = self.book_list.getBookByPublisher(self.lineEdit.text())
 
-        if book_info is False:
+        book_info.print()
+
+        if book_info == Error.NoneBook:
             book_info = []
+
         for row, linedata in enumerate(book_info):
             for column, itemdata in enumerate(linedata):
                 item = QStandardItem(str(itemdata)) if itemdata is not None else QStandardItem('')

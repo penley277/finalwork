@@ -2,6 +2,7 @@ import datetime
 
 from DButil.DBO import DBO
 from models.Book import Book
+from util import Error
 
 
 class BookList(object):
@@ -38,8 +39,8 @@ class BookList(object):
         :return: 返回书籍
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookName like \'%', name, '%\''))
-        if select is None:
-            return False
+        if len(select) == 0:
+            return Error.NoneBook
 
         i = 0
         bi = []
@@ -58,7 +59,7 @@ class BookList(object):
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
         if len(select) == 0:
-            return False
+            return Error.NoneBook
 
         return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
                     select[0][6], select[0][7])
@@ -70,7 +71,10 @@ class BookList(object):
         :param num: 书籍的书号
         :return: 返回书籍
         """
+
         select = self.db.select_items('book', '*', '%s%s%s' % ('where author like \'%', author, '%\''))
+        if len(select) == 0:
+            return Error.NoneBook
         i = 0
         bi = []
         while i < len(select):
@@ -97,7 +101,7 @@ class BookList(object):
         select = self.db.select_items('book', '*', '%s%s%s' % ('where publisher like \'%', publisher, '%\''))
 
         if len(select) == 0:
-            return None
+            return Error.NoneBook
 
         i = 0
         bi = []
@@ -123,8 +127,14 @@ class BookList(object):
         """
         select = self.db.select_items('book', '*')
         if len(select) == 0:
-            return None
-        return select
+            return Error.NoneBook
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
+                           select[i][6], select[i][7]))
+            i = i + 1
+        return bi
 
     def topTenByTime(self):
         pass

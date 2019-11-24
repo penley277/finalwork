@@ -20,7 +20,7 @@ class StudentList(object):
         """
         self.db.insert_values('student', [stu.getStudNo(), stu.getStudName(),
                                           stu.getMajor(), stu.getClassNum(),
-                                          stu.getPhoneNum(), stu.getPassWd()])
+                                          stu.getPhoneNum(), stu.getStudNo()])
 
     def removeStu(self, num):
         """
@@ -73,8 +73,8 @@ class StudentList(object):
             i = i + 1
         return bi
 
-    def setPassWdByIdPasswd(self, no, newPassWd):
-        self.db.update_values('student', {'passwd':newPassWd}, '%s%s%s' % ('where studNo=\'', no, '\''))
+    def setPW(self, Id, newPW):
+        self.db.update_values('student', {'passwd': newPW}, '%s%s%s' % ('where studNo=\'', Id, '\''))
 
     def outputStuList(self):
         """
@@ -97,7 +97,7 @@ class StudentList(object):
         :param filename:文件名字
         :return:无
         """
-        with open(filename, 'r') as file_to_read:
+        with open(filename, 'r', encoding='gbk') as file_to_read:
             while True:
                 lines = file_to_read.readline()
                 if not lines:  # 读取到最后一行，停止读取操作
@@ -105,7 +105,7 @@ class StudentList(object):
 
                 no, name, major, classNum, phoneNum = [i for i in lines.split()]  # 根据空格，将值读出
                 student = Student(no, name, major,  # 将读取的值设置为一个对象
-                                  classNum, phoneNum, '')
+                                  classNum, phoneNum, no)
                 self.addStu(student)
         file_to_read.close()
 
@@ -114,5 +114,6 @@ class StudentList(object):
 
 if __name__ == '__main__':
     stu = StudentList('system.db')
-    for i in range(5):
-        stu.getStuByName('李')[i].print()
+    stu.getStuByName('李').pop(0).print()
+    stu.getStuByNo('1113000001').print()
+    stu.getStuByPhNum('13941698396').pop(0).print()

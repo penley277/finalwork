@@ -69,19 +69,8 @@ class ManagerList(object):
         else:
             return False
 
-    def changePasswd(self, num, oldPasswd, newPasswd):
-        """
-        修改管理员密码
-        :param num: 想要修改的管理员id
-        :param passwd: 想要改为的密码
-        :return:
-        """
-        select = self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', num, '\''))
-        if len(select) == 0:
-            return '滚蛋，你是谁家的管理员？'
-        manager = Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
-        if oldPasswd == manager.getPasswd():
-            self.db.update_values('manager', {'passwd': newPasswd}, '%s%s%s' % ('where managerID=\'', num, '\''))
+    def setPW(self, Id, newPW):
+        self.db.update_values('manager', {'passwd': newPW}, '%s%s%s' % ('where managerID=\'', Id, '\''))
 
     def closeDB(self):
         self.db.close_database()
