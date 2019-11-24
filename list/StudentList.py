@@ -1,6 +1,7 @@
 
 from DButil.DBO import DBO
 from models.Student import Student
+from util import Error
 
 
 class StudentList(object):
@@ -18,6 +19,9 @@ class StudentList(object):
         :param stu: 添加学生的信息
         :return: 无
         """
+        if self.getStuByNo(stu.getStudNo()) != Error.NoneStu:
+            return Error.ExitStu
+
         self.db.insert_values('student', [stu.getStudNo(), stu.getStudName(),
                                           stu.getMajor(), stu.getClassNum(),
                                           stu.getPhoneNum(), stu.getStudNo()])
@@ -38,7 +42,7 @@ class StudentList(object):
         """
         select = self.db.select_items('student', '*', '%s%s%s' % ('where studNo=\'', no, '\''))
         if len(select) == 0:
-            return None
+            return Error.NoneStu
         return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
 
     def getStuByName(self, name):
@@ -49,7 +53,7 @@ class StudentList(object):
         """
         select = self.db.select_items('student', '*', '%s%s%s' % ('where studName like \'%', name, '%\''))
         if len(select) == 0:
-            return None
+            return Error.NoneStu
         i = 0
         bi = []
         while i < len(select):
@@ -65,7 +69,7 @@ class StudentList(object):
         """
         select = self.db.select_items('student', '*', '%s%s%s' % ('where phoneNum like \'%', phone, '%\''))
         if len(select) == 0:
-            return None
+            return Error.NoneStu
         i = 0
         bi = []
         while i < len(select):

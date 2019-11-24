@@ -125,6 +125,9 @@ class Book(object):
         self.pubTime = pubTime
 
     def getComment(self):
+        return self.comment
+
+    def getCommentToList(self):
         """
         获取书籍的评论
         :return:

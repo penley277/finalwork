@@ -67,6 +67,10 @@ class BookList(object):
 
         return book
 
+    def updateBorrowAndCnt(self, bookno, bookCnt, borrowCnt):
+        self.db.update_values('book', {'bookCnt': bookCnt, 'borrowCnt': borrowCnt},
+                              '%s%s%s' % ('where bookNum=\'', bookno, '\''))
+
     def getBookByAuthor(self, author):
         """
         通过书籍的书号，获取书籍

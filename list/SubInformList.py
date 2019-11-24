@@ -38,14 +38,6 @@ class SubInformList(InformList):
         return Success.FinishSub
 
     def addInformByNos(self, stuno, bookno):
-        book = self.bookList.getBookByNo(bookno)
-        if book is False:
-            return Error.NoneBook
-
-        student = self.studList.getStuByNo(stuno)
-
-        if book.getBookCnt() == 0:  # 如果书籍已经借空
-            return Error.BookCnt0
 
         no = ''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20))
         self.db.insert_values('subInfo', [no, stuno, bookno, datetime.date.today().isoformat()])

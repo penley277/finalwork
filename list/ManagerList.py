@@ -1,5 +1,6 @@
 from DButil.DBO import DBO
 from models.Manager import Manager
+from util import Error, Success
 
 
 class ManagerList(object):
@@ -19,6 +20,7 @@ class ManagerList(object):
         """
         self.db.insert_values('manager', [other.getManagerId(), other.getName(),
                                           other.getPhone(), other.getPasswd(), other.getType()])
+        return Success.FinishAddManager
 
     def getManagerById(self, id):
         """
@@ -28,7 +30,7 @@ class ManagerList(object):
         """
         select = self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', id, '\''))
         if len(select) == 0:
-            return None
+            return Error.NoManager
 
         i = 0
         bi = []
@@ -36,7 +38,6 @@ class ManagerList(object):
             bi.append(Manager(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
             i = i + 1
         return bi
-
 
     def getManagerByName(self, name):
         """
@@ -46,7 +47,8 @@ class ManagerList(object):
         """
         select = self.db.select_items('manager', '*', '%s%s%s' % ('where name like \'%', name, '%\''))
         if len(select) == 0:
-            return None
+            return Error.NoManager
+
         i = 0
         bi = []
         while i < len(select):
@@ -60,6 +62,9 @@ class ManagerList(object):
         :param num: 删除管理员的ID号
         :return:
         """
+        if self.getManagerById(num) == Error.NoManager:
+            return Error.NoManager
+
         self.db.delete_values('manager', '%s%s%s' % ('where managerID=\'', num, '\''))
 
     def changeType(self, num, manaType):
@@ -72,9 +77,9 @@ class ManagerList(object):
         if manaType == 'stu' or manaType == 'book':
             self.db.update_values('manager', dict([('managerType', manaType)]),
                                   '%s%s%s' % ('where managerID=\'', num, '\''))
-            return True
+            return Success.FinishChangeType
         else:
-            return False
+            return Error.ChangeTypeInvild
 
     def setPW(self, Id, newPW):
         self.db.update_values('manager', {'passwd': newPW}, '%s%s%s' % ('where managerID=\'', Id, '\''))

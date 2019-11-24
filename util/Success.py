@@ -3,8 +3,15 @@
 """
 
 FinishReturn = True  # 书籍归还成功
-FinishBorrow = 3  # 书籍借阅成功
-FinishSub = 3
+FinishBorrow = True  # 书籍借阅成功
+FinishSub = True
+
+FinishAddStu = True
+FinishAddBook = True
+FinishAddManager = True
+FinishRenew = True
+
+FinishChangeType = True
 
 
 def fozu():

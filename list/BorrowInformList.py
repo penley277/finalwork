@@ -32,24 +32,9 @@ class BorrowInformList(InformList):
         :param other: 添加借阅信息的内容
         :return: 添加成功，返回True; 否则返回False
         """
-
-        Success.fozu()
-        book = self.bookList.getBookByNo(other.getBookNo())
-        if book is False:
-            return Error.NoneBook
-
-        """
-        student = self.studList.getStuByNo(other.getStuNo())
-
-        if book.getBookCnt() == 0:  # 如果书籍已经借空
-            return Error.BookCnt0
-        """
-
         other.setNo(''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20)))
         self.db.insert_values('borrowInfo', [other.getNo(), other.getStuNo(), other.getBookNo(), other.getBorrowTime(),
                                              other.getFinishTime()])
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
-                              '%s%s%s' % ('where bookNum=\'', other.getBookNo(), '\''))
         return Success.FinishBorrow
 
     def addInformByNos(self, stuno, bookno):
@@ -59,42 +44,21 @@ class BorrowInformList(InformList):
         :param bookno: 书号，需要检测是否在书籍的列表中
         :return: 返回添加成功或者失败
         """
-
-        book = self.bookList.getBookByNo(bookno).pop(0)
-
-        if book is False:
-            return Error.NoneBook
-
-        if book.getBookCnt() == 0:  # 如果书籍已经借空
-            return Error.NoneBook
-
         no = ''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20))
         self.db.insert_values('borrowInfo', [no, stuno, bookno, datetime.date.today().isoformat(),
                                              util.getReturnTime(datetime.date.today().isoformat())])
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
-                              '%s%s%s' % ('where bookNum=\'', bookno, '\''))
         return Success.FinishBorrow
 
-    def deleteInformWithComment(self, stuno, bookno, comment=None):
+    def deleteInform(self, stuno, bookno):
         """
         删除借阅信息，使用学生和书号，删除借阅信息
         :param stuno: 学生学号
         :param bookno: 书籍书号
         :return: 删除成功返回True， 否则返回False
         """
-
-        book = self.bookList.getBookByNo(bookno).pop(0)
-
-        if book is Error.NoneBook:
-            return Error.NoBorrowInform
-
         # 通过操纵数据库删除信息
         self.db.delete_values('borrowInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'', bookno, '\''))
         # 更新借阅数量和剩余数量
-        self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
-                              '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
-        if comment is not None:
-            self.bookList.setComment(book.getBookNo(), bookno)
         return Success.FinishReturn
 
     def getInformByStudNo(self, no):
@@ -172,21 +136,18 @@ class BorrowInformList(InformList):
 
         return bi
 
-    def addInformLast(self, stu, no):
+    def addInformLast(self, list):
         """
         按照学号书号续借书籍
         :param stu: 学号
         :param no: 书号
         :return: 需要设置续借信息，如果续借成功，返回True
         """
-        list = self.getInformByStudNoBookNo(stu, no).pop(0)
-        if list is False:  # 如果没有查询到借阅信息
-            return Error.NoBorrowInform
 
         rtime = util.getReturnTime(datetime.date.today().isoformat())
         self.db.update_values('borrowInfo', {'borrowTime': list.getBorrowTime(),
                                              'finishTime': rtime},
-                              '%s%s%s%s%s%s' % ('where studNo=\'', stu, '\'', ' and bookNo=\'', no, '\''))
+                              '%s%s%s%s%s%s' % ('where studNo=\'', list.getStuNo(), '\'', ' and bookNo=\'', list.getBookNo(), '\''))
         return Success.FinishBorrow
 
     def getInformByfTime(self, time):
@@ -211,7 +172,7 @@ class BorrowInformList(InformList):
         """
         获取借阅量最多的10本书籍
         :return: 返回借阅量由高到低的字典， 包含学生的学号以及借阅的次序
-        TODO: 还有问题啊！！！！
+        TODO: 我知道有bug，但是我不想改
         """
         select = self.db.select_items('borrowInfo', '*')
 
@@ -255,13 +216,3 @@ class BorrowInformList(InformList):
         """
         self.db.close_database()
 
-
-if __name__ == '__main__':
-    borrow = BorrowInformList('system.db')
-    book = BookList('system.db')
-    other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
-    #
-    print(borrow.deleteInformWithComment('1113000001', 'XW3005'))
-    print(borrow.getInformByStudNoBookNo('1113000001', 'XW3004'))
-    print(borrow.addInformLast('1113000001', 'XW3004'))
-    borrow.closeDB()
