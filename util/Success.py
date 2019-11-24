@@ -11,6 +11,9 @@ FinishAddBook = True
 FinishAddManager = True
 FinishRenew = True
 
+FinishDeleteStu = True
+FinishModify = True
+
 FinishChangeType = True
 
 

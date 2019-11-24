@@ -19,12 +19,9 @@ class StudentList(object):
         :param stu: 添加学生的信息
         :return: 无
         """
-        if self.getStuByNo(stu.getStudNo()) != Error.NoneStu:
-            return Error.ExitStu
-
         self.db.insert_values('student', [stu.getStudNo(), stu.getStudName(),
                                           stu.getMajor(), stu.getClassNum(),
-                                          stu.getPhoneNum(), stu.getStudNo()])
+                                          stu.getPhoneNum(), stu.getPassWd()])
 
     def removeStu(self, num):
         """
@@ -44,6 +41,11 @@ class StudentList(object):
         if len(select) == 0:
             return Error.NoneStu
         return Student(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5])
+
+
+    def modify(self, param, no, name):
+        self.db.update_values('student', {'%s%s%s' % ('\'', param, '\''): name}, '%s%s%s' % ('where studNo=\'', no, '\''))
+
 
     def getStuByName(self, name):
         """
@@ -76,9 +78,6 @@ class StudentList(object):
             bi.append(Student(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5]))
             i = i + 1
         return bi
-
-    def setPW(self, Id, newPW):
-        self.db.update_values('student', {'passwd': newPW}, '%s%s%s' % ('where studNo=\'', Id, '\''))
 
     def outputStuList(self):
         """

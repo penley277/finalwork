@@ -17,3 +17,5 @@ ExitBook = 7 # 已经存在的书籍，不能添加
 NoneBook = 8  # 找不到书籍
 BookCnt0 = 9  # 书籍借空， 不能借阅
 
+FileNameFalse = 10
+

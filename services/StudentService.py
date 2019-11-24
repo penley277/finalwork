@@ -7,6 +7,10 @@ from util import Error, Success
 class StudentService(object):
 
     def __init__(self, database_name):
+        """
+        学生服务类，提供程序的各项功能
+        :param database_name:
+        """
         self.borrowlist = BorrowInformList(database_name)
         self.booklist = BookList(database_name)
         self.sublist = SubInformList(database_name)
@@ -19,7 +23,6 @@ class StudentService(object):
         :return: @see$Error.NoneBook : 没有这本书的借阅信息
                  @see$Error.FinishBorrow : 借阅成功
         """
-
         book = self.booklist.getBookByNo(bookno)
         if book is Error.NoneBook:
             return Error.NoneBook
@@ -143,6 +146,7 @@ class StudentService(object):
             return Error.NoneBook
 
         return self.sublist.addInformByNos(stuno, bookno)
+
 
 
 if __name__ == '__main__':
