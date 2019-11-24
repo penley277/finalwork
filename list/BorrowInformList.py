@@ -53,21 +53,26 @@ class BorrowInformList(InformList):
         return Success.FinishBorrow
 
     def addInformByNos(self, stuno, bookno):
-
         """
-        book = self.bookList.getBookByNo(bookno)
+        使用学号和书号进行书籍借阅
+        :param stuno: 学号，需要进行检测是否在书籍的列表中。登录之后，可以直接获取使用
+        :param bookno: 书号，需要检测是否在书籍的列表中
+        :return: 返回添加成功或者失败
+        """
+
+        book = self.bookList.getBookByNo(bookno).pop(0)
+
         if book is False:
             return Error.NoneBook
 
-        student = self.studList.getStuByNo(stuno)
-
         if book.getBookCnt() == 0:  # 如果书籍已经借空
-            return Error.BookCnt0
+            return Error.NoneBook
 
-        """
         no = ''.join(random.sample(string.digits * 5 + string.ascii_letters * 4, 20))
         self.db.insert_values('borrowInfo', [no, stuno, bookno, datetime.date.today().isoformat(),
                                              util.getReturnTime(datetime.date.today().isoformat())])
+        self.db.update_values('book', {'bookCnt': book.getBookCnt() - 1, 'borrowCnt': book.getBorrowCnt() + 1},
+                              '%s%s%s' % ('where bookNum=\'', bookno, '\''))
         return Success.FinishBorrow
 
     def deleteInformWithComment(self, stuno, bookno, comment=None):
@@ -78,17 +83,18 @@ class BorrowInformList(InformList):
         :return: 删除成功返回True， 否则返回False
         """
 
-        book = self.bookList.getBookByNo(bookno)
+        book = self.bookList.getBookByNo(bookno).pop(0)
 
-        if book is False:
-            return Error.NoneBook
+        if book is Error.NoneBook:
+            return Error.NoBorrowInform
 
         # 通过操纵数据库删除信息
         self.db.delete_values('borrowInfo', '%s%s%s%s%s' % ('where studNo=\'', stuno, '\' and bookNo=\'', bookno, '\''))
         # 更新借阅数量和剩余数量
         self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
-        self.bookList.setComment(bookno, comment)
+        if comment is not None:
+            self.bookList.setComment(bookno, comment)
 
         return Success.FinishReturn
 
@@ -241,7 +247,5 @@ if __name__ == '__main__':
     book = BookList('system.db')
     other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
     #
-    borrow.addInformByNos('1113000001', 'XW3005')
-    borrow.addInformByNos('1113000001', 'XW3001')
-    borrow.addInformByNos('1113000001', 'XW3002')
+    print(borrow.deleteInformWithComment('1113000001', 'XW3005'))
     borrow.closeDB()

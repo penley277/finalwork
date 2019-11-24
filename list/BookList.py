@@ -58,11 +58,14 @@ class BookList(object):
         """
         select = self.db.select_items('book', '*', '%s%s%s' % ('where bookNum=\'', num, '\''))
 
+        book = []
         if len(select) == 0:
             return Error.NoneBook
 
-        return Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
-                    select[0][6], select[0][7])
+        book.append(Book(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4], select[0][5],
+                         select[0][6], select[0][7]))
+
+        return book
 
     def getBookByAuthor(self, author):
         """
@@ -112,7 +115,7 @@ class BookList(object):
         return bi
 
     def setComment(self, no, comment):
-        book = self.getBookByNo(no)
+        book = self.getBookByNo(no).pop(0)
         if book.getComment() is None:
             self.db.update_values('book', {'comment': comment + '`'},
                                   '%s%s%s' % ('where bookNum=\'', no, '\''))
@@ -137,7 +140,20 @@ class BookList(object):
         return bi
 
     def topTenByTime(self):
-        pass
+        """
+        获取出版时间前十的书籍
+        :return:
+        """
+        select = self.db.select_items('book', '*', '%s' % 'order by pubTime desc')
+        if len(select) == 0:
+            return Error.NoneBook
+        i = 0
+        bi = []
+        while i < 10:
+            bi.append(Book(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4], select[i][5],
+                           select[i][6], select[i][7]))
+            i = i + 1
+        return bi
 
     def addBookByFile(self, filename):
         """
@@ -161,4 +177,5 @@ class BookList(object):
 
 if __name__ == '__main__':
     b = BookList('system.db')
-    print(b.getBookByNo('Xw3031'))
+    for i in range(10):
+        b.topTenByTime().pop(i).print()

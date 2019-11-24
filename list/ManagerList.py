@@ -29,7 +29,14 @@ class ManagerList(object):
         select = self.db.select_items('manager', '*', '%s%s%s' % ('where managerID=\'', id, '\''))
         if len(select) == 0:
             return None
-        return Manager(select[0][0], select[0][1], select[0][2], select[0][3], select[0][4])
+
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Manager(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
+            i = i + 1
+        return bi
+
 
     def getManagerByName(self, name):
         """
@@ -39,7 +46,7 @@ class ManagerList(object):
         """
         select = self.db.select_items('manager', '*', '%s%s%s' % ('where name like \'%', name, '%\''))
         if len(select) == 0:
-            return False
+            return None
         i = 0
         bi = []
         while i < len(select):

@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("./bms.jpg"))
+    app.setWindowIcon(QIcon("./bms.png"))
     # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
     ui_login = Ui_Login()
