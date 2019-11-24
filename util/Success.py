@@ -12,6 +12,7 @@ FinishAddManager = True
 FinishRenew = True
 
 FinishDeleteStu = True
+FinishDeleteManager = True
 FinishModify = True
 
 FinishChangeType = True

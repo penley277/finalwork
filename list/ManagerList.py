@@ -39,13 +39,13 @@ class ManagerList(object):
             i = i + 1
         return bi
 
-    def getManagerByName(self, name):
+    def getManagerByParam(self, param, name):
         """
         通过管理员姓名获取管理员
         :param name: 管理员姓名
         :return: 管理员列表
         """
-        select = self.db.select_items('manager', '*', '%s%s%s' % ('where name like \'%', name, '%\''))
+        select = self.db.select_items('manager', '*', '%s%s%s%s%s' % ('where ', param, ' like \'%', name, '%\''))
         if len(select) == 0:
             return Error.NoManager
 
@@ -66,6 +66,7 @@ class ManagerList(object):
             return Error.NoManager
 
         self.db.delete_values('manager', '%s%s%s' % ('where managerID=\'', num, '\''))
+        return
 
     def changeType(self, num, manaType):
         """
@@ -74,15 +75,30 @@ class ManagerList(object):
         :param manaType: 想要改为的管理员类型
         :return:
         """
-        if manaType == 'stu' or manaType == 'book':
+        if manaType == '学生管理员' or manaType == '书籍管理员':
             self.db.update_values('manager', dict([('managerType', manaType)]),
                                   '%s%s%s' % ('where managerID=\'', num, '\''))
             return Success.FinishChangeType
         else:
             return Error.ChangeTypeInvild
 
-    def setPW(self, Id, newPW):
-        self.db.update_values('manager', {'passwd': newPW}, '%s%s%s' % ('where managerID=\'', Id, '\''))
+    def modifyParamById(self, param, Id, newItem):
+        self.db.update_values('manager', {param: newItem}, '%s%s%s' % ('where managerID=\'', Id, '\''))
+
+    def getAllManager(self):
+        """
+        输出所有的学生信息
+        :return: 所有学生的信息
+        """
+        select = self.db.select_items('manager', '*')
+        if select is None:
+            return False
+        i = 0
+        bi = []
+        while i < len(select):
+            bi.append(Manager(select[i][0], select[i][1], select[i][2], select[i][3], select[i][4]))
+            i = i + 1
+        return bi
 
     def closeDB(self):
         self.db.close_database()
