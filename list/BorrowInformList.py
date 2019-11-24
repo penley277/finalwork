@@ -94,8 +94,7 @@ class BorrowInformList(InformList):
         self.db.update_values('book', {'bookCnt': book.getBookCnt() + 1, 'borrowCnt': book.getBorrowCnt() - 1},
                               '%s%s%s' % ('where bookNum=\'', book.getBookNo(), '\''))
         if comment is not None:
-            self.bookList.setComment(bookno, comment)
-
+            self.bookList.setComment(book.getBookNo(), bookno)
         return Success.FinishReturn
 
     def getInformByStudNo(self, no):
@@ -105,6 +104,26 @@ class BorrowInformList(InformList):
         :return: 获取到信息，返回借阅信息数组; 如果没有得到信息，返回None
         """
         select = self.db.select_items('borrowInfo', '*', '%s%s%s' % ('where studNo=\'', no, '\''))
+        i = 0
+        bi = []
+
+        # 如果没有选择到信息，返回空
+        if len(select) == 0:
+            return Error.NoBorrowInform
+
+        while i < len(select):
+            bi.append(BorrowInfo(select[i][1], select[i][2], select[i][3], select[i][4]))
+            i = i + 1
+        return bi
+
+    def getInformByStudNoBookNo(self, stuno, bookno):
+        """
+        根据学号，列出所有的借阅书籍
+        :param no: 学生学号
+        :return: 获取到信息，返回借阅信息数组; 如果没有得到信息，返回None
+        """
+        select = self.db.select_items('borrowInfo', '*',
+                                      '%s%s%s%s%s%s' % ('where studNo=\'', stuno, '\'', ' and bookNo=\'', bookno, '\''))
         i = 0
         bi = []
 
@@ -153,26 +172,21 @@ class BorrowInformList(InformList):
 
         return bi
 
-    def addInformLast(self, stu):
+    def addInformLast(self, stu, no):
         """
-        按照学号续借所有的书籍
+        按照学号书号续借书籍
         :param stu: 学号
-        :param newBTime: 新的借阅时间
-        :param newFTime: 新的换书时间
+        :param no: 书号
         :return: 需要设置续借信息，如果续借成功，返回True
         """
-        list = self.getInformByStudNo(stu)
+        list = self.getInformByStudNoBookNo(stu, no).pop(0)
         if list is False:  # 如果没有查询到借阅信息
             return Error.NoBorrowInform
 
-        i = 0
-        while i < len(list):
-            # 更新信息
-            rtime = util.getReturnTime(datetime.date.today().isoformat())
-            self.db.update_values('borrowInfo', {'borrowTime': list[i].getBorrowTime(),
-                                                 'finishTime': rtime},
-                                  '%s%s%s' % ('where studNo=\'', stu, '\''))
-            i = i + 1
+        rtime = util.getReturnTime(datetime.date.today().isoformat())
+        self.db.update_values('borrowInfo', {'borrowTime': list.getBorrowTime(),
+                                             'finishTime': rtime},
+                              '%s%s%s%s%s%s' % ('where studNo=\'', stu, '\'', ' and bookNo=\'', no, '\''))
         return Success.FinishBorrow
 
     def getInformByfTime(self, time):
@@ -248,4 +262,6 @@ if __name__ == '__main__':
     other1 = BorrowInfo('1113000001', 'XW3005', '2019-10-12', '2019-11-12')
     #
     print(borrow.deleteInformWithComment('1113000001', 'XW3005'))
+    print(borrow.getInformByStudNoBookNo('1113000001', 'XW3004'))
+    print(borrow.addInformLast('1113000001', 'XW3004'))
     borrow.closeDB()
