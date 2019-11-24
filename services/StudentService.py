@@ -122,7 +122,7 @@ class StudentService(object):
                 cnt.append(top[i][1])
             else:
                 bi.append('')
-                cnt.append(' addInformByNos')
+                cnt.append(' ')
             i = i + 1
         return bi, cnt
 
